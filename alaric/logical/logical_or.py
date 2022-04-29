@@ -7,6 +7,8 @@ if TYPE_CHECKING:
 
 
 class OR:
+    """Conduct a logical OR between all items passed to the constructor."""
+
     def __init__(
         self,
         *comparisons: Union[

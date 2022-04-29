@@ -7,6 +7,8 @@ if TYPE_CHECKING:
 
 
 class AND:
+    """Conduct a logical AND between all items passed to the constructor."""
+
     def __init__(
         self,
         *comparisons: Union[
