@@ -1,3 +1,4 @@
+from alaric import AQ
 from alaric.comparison import IN
 from alaric.comparison.comparison_eq import EQ
 from alaric.logical import OR, AND
@@ -11,4 +12,4 @@ if __name__ == "__main__":
     logical_or_2 = OR(eq_3, in_1)
 
     logical_and = AND(logical_or, logical_or_2)
-    print(logical_and.build())
+    print(AQ(logical_and).build())
