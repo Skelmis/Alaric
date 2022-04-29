@@ -1,0 +1,1 @@
+A comparison is defined as comparing something on a field. 
