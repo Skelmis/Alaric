@@ -1,0 +1,1 @@
+All protocols end with a `T` to signify type

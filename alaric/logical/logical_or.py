@@ -1,0 +1,21 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, List, Dict, Union
+
+if TYPE_CHECKING:
+    from alaric.abc import ComparisonT, LogicalT
+
+
+class OR:
+    def __init__(
+        self,
+        *comparisons: Union[
+            Union[ComparisonT, LogicalT],
+            List[Union[ComparisonT, LogicalT]],
+        ]
+    ):
+        self.comparisons: List[Union[ComparisonT, LogicalT]] = list(comparisons)
+
+    def build(self) -> Dict[str, List[Dict]]:
+        comparisons: List[Dict] = [c.build() for c in self.comparisons]
+        return {"$or": comparisons}
