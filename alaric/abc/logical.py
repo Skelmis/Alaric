@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from typing import runtime_checkable, Protocol, TYPE_CHECKING, List, Dict, Literal
+from typing import (
+    runtime_checkable,
+    Protocol,
+    TYPE_CHECKING,
+    List,
+    Dict,
+    Union,
+)
 
 if TYPE_CHECKING:
     from alaric.abc import ComparisonT
@@ -8,8 +15,17 @@ if TYPE_CHECKING:
 
 @runtime_checkable
 class LogicalT(Protocol):
-    def __init__(self, comparable_one: ComparisonT, comparable_two: ComparisonT):
+    """A protocol for all Logical classes to follow."""
+
+    def __init__(
+        self,
+        *comparisons: Union[
+            Union[ComparisonT, LogicalT],
+            List[Union[ComparisonT, LogicalT]],
+        ]
+    ):
         ...
 
     def build(self) -> Dict[str, List[Dict]]:
+        """Return this instance as a usable Mongo filter."""
         ...

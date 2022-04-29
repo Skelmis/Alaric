@@ -10,6 +10,22 @@ Welcome to Alaric's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Advanced Usage:
+
+   modules/selectors/comparisons.rst
+   modules/selectors/logical.rst
+   modules/selectors/examples.rst
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Object Reference:
+
+   modules/objects/advanced_query.rst
+   modules/objects/logical_t.rst
+   modules/objects/comparison_t.rst
+
 
 
 Indices and tables
