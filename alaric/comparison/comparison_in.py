@@ -5,6 +5,8 @@ class IN:
     """
     Asserts the provided field is within the provided values.
 
+    This class can be used in conjunction with :py:class:`NEGATE`
+
     Parameters
     ----------
     field: str
@@ -18,9 +20,11 @@ class IN:
         assert isinstance(value, (list, tuple, set))
         self.value: Union[list, tuple, set] = value
 
+        self._operator = "$in"
+
     def __repr__(self):
         return f"IN(field='{self.field}', value={self.value})"
 
     def build(self) -> Dict[str, Dict[str, Union[list, tuple, set]]]:
         """Return this instance as a usable Mongo filter."""
-        return {self.field: {"$in": self.value}}
+        return {self.field: {self._operator: self.value}}

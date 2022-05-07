@@ -5,6 +5,8 @@ class EXISTS:
     """
     Returns all documents that contain this field.
 
+    This class can be used in conjunction with :py:class:`NEGATE`
+
     Parameters
     ----------
     field: str
