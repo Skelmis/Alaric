@@ -18,6 +18,9 @@ class EQ:
         assert not isinstance(value, (list, tuple, set))
         self.value: Union[int, str, float, bytes] = value
 
+    def __repr__(self):
+        return f"EQ(field='{self.field}', value={self.value})"
+
     def build(self) -> Dict[str, Dict[str, Union[int, str, float, bytes]]]:
         """Return this instance as a usable Mongo filter."""
         return {self.field: {"$eq": self.value}}

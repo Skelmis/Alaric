@@ -26,6 +26,9 @@ class LogicalT(Protocol):
     ):
         ...
 
+    def __repr__(self):
+        ...
+
     def build(self) -> Dict[str, List[Dict]]:
         """Return this instance as a usable Mongo filter."""
         ...

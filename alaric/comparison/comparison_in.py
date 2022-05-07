@@ -18,6 +18,9 @@ class IN:
         assert isinstance(value, (list, tuple, set))
         self.value: Union[list, tuple, set] = value
 
+    def __repr__(self):
+        return f"IN(field='{self.field}', value={self.value})"
+
     def build(self) -> Dict[str, Dict[str, Union[list, tuple, set]]]:
         """Return this instance as a usable Mongo filter."""
         return {self.field: {"$in": self.value}}

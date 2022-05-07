@@ -10,6 +10,9 @@ class ComparisonT(Protocol):
     def __init__(self, field: str, value: Union[List[T], T]):
         ...
 
+    def __repr__(self):
+        ...
+
     def build(self) -> Dict:
         """Return this instance as a usable Mongo filter."""
         ...

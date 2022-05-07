@@ -18,6 +18,9 @@ class OR:
     ):
         self.comparisons: List[Union[ComparisonT, LogicalT]] = list(comparisons)
 
+    def __repr__(self):
+        return f"OR(comparisons={self.comparisons})"
+
     def build(self) -> Dict[str, List[Dict]]:
         """Return this instance as a usable Mongo filter."""
         comparisons: List[Dict] = [c.build() for c in self.comparisons]

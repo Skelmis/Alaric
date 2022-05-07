@@ -15,6 +15,9 @@ class NEGATE:
     def __init__(self, comparison: ComparisonT):
         self.comparison: ComparisonT = comparison
 
+    def __repr__(self):
+        return f"NEGATE({self.comparison})"
+
     def build(self) -> Dict:
         if isinstance(self.comparison, EXISTS):
             self.comparison._val = False
