@@ -10,12 +10,15 @@ Welcome to Alaric's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   modules/main.rst
+
 .. toctree::
    :maxdepth: 2
    :caption: Advanced Usage:
 
    modules/selectors/comparisons.rst
    modules/selectors/logical.rst
+   modules/selectors/meta.rst
    modules/selectors/examples.rst
 
 .. toctree::

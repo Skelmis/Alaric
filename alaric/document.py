@@ -39,7 +39,7 @@ def return_converted(func):
 
 
 class Document:
-    _version = 9.1
+    _version = 10
 
     def __init__(
         self,
@@ -56,7 +56,7 @@ class Document:
             What this _document should be called
         converter: Optional[Type[T]]
             An optional converter to try
-            convert all data-types which
+            to convert all data-types which
             return either Dict or List into
         """
         self._document_name: str = document_name
@@ -68,18 +68,19 @@ class Document:
     def __repr__(self):
         return f"<Document(document_name={self.document_name})>"
 
-    # <-- Pointer Methods -->
+    @return_converted
     async def find(
-        self, filter_dict: Union[Dict, BuildAble, Any]
+        self, filter_dict: Union[Dict, BuildAble]
     ) -> Optional[Union[Dict[str, Any], Type[T]]]:
         """
         Find and return one item.
+
         Parameters
         ----------
-        filter_dict: Union[Dict, Any]
-            The _id of the item to find,
-            if a Dict is passed that is
-            used as the filter.
+        filter_dict: Union[Dict, BuildAble]
+            A dictionary to use as a filter or
+            :py:class:`AQ` object.
+
         Returns
         -------
         Optional[Union[Dict[str, Any], Type[T]]]
@@ -89,25 +90,60 @@ class Document:
             filter_dict = filter_dict.build()
 
         filter_dict = self.__convert_filter(filter_dict)
-        return await self.find_by_custom(filter_dict)
+        self.__ensure_dict(filter_dict)
 
-    async def delete(self, filter_dict: Union[Dict, Any]) -> Optional[DeleteResult]:
+        return await self._document.find_one(filter_dict)
+
+    @return_converted
+    async def find_many(
+        self, filter_dict: Union[Dict[str, Any], BuildAble]
+    ) -> List[Union[Dict[str, Any], Type[T]]]:
         """
-        Delete an item from the Document
-        if an item with that _id exists
+        Find and return all items
+        matching the given filter.
+
         Parameters
         ----------
-        filter_dict: Union[Dict, Any]
-            The _id of the item to delete,
-            if a Dict is passed that is
-            used as the filter.
+        filter_dict: Dict[str, Any]
+            A dictionary to use as a filter or
+            :py:class:`AQ` object.
+
         Returns
         -------
-        DeleteResult
-            The result of deletion
+        List[Union[Dict[str, Any], Type[T]]]
+            The result of the query
+        """
+        if isinstance(filter_dict, BuildAble):
+            filter_dict = filter_dict.build()
+
+        self.__ensure_dict(filter_dict)
+
+        return await self._document.find(filter_dict).to_list(None)
+
+    async def delete(
+        self, filter_dict: Union[Dict, BuildAble]
+    ) -> Optional[DeleteResult]:
+        """
+        Delete an item from the Document
+        if an item with the provided filter exists.
+
+        Parameters
+        ----------
+        filter_dict: Union[Dict, BuildAble]
+            A dictionary to use as a filter or
+            :py:class:`AQ` object.
+
+        Returns
+        -------
+        Optional[DeleteResult]
+            The result of deletion if it occurred.
         """
         filter_dict = self.__convert_filter(filter_dict)
-        return await self.delete_by_custom(filter_dict)
+        self.__ensure_dict(filter_dict)
+
+        result: DeleteResult = await self._document.delete_many(filter_dict)
+        result: Optional[DeleteResult] = result if result.deleted_count != 0 else None
+        return result
 
     async def update(
         self,
@@ -140,143 +176,41 @@ class Document:
     # <-- Actual Methods -->
     @return_converted
     async def get_all(
-        self, filter_dict: Optional[Dict[str, Any]] = None, *args: Any, **kwargs: Any
+        self,
+        filter_dict: Optional[Union[Dict[str, Any], BuildAble]] = None,
+        *args: Any,
+        **kwargs: Any,
     ) -> List[Optional[Union[Dict[str, Any], Type[T]]]]:
         """
         Fetches and returns all items
         which match the given filter.
+
+        Example usages
+
+        .. code-block:: python
+            results = await document.get_all()
+
+            ...
+
+            # Get all documents with a given field
+            results = await document.get_all(AQ(EXISTS("field")))
+
         Parameters
         ----------
         filter_dict: Optional[Dict[str, Any]]
-            What to filter based on
+            A dictionary to use as a filter or
+            :py:class:`AQ` object.
+
         Returns
         -------
         List[Optional[Union[Dict[str, Any], Type[T]]]]
             The items matching the filter
         """
         filter_dict = filter_dict or {}
-
-        return await self._document.find(filter_dict, *args, **kwargs).to_list(None)
-
-    @return_converted
-    async def get_all_where_field_exists(
-        self, field: Any, where_field_doesnt_exist: bool = False
-    ) -> List[Optional[Union[Dict[str, Any], Type[T]]]]:
-        """
-        Return all of the documents which
-        contain the key given by `field`
-        Parameters
-        ----------
-        field: Any
-            The field to match by
-        where_field_doesnt_exist: bool, Optional
-            If this is ``True``, then this method
-            will return all the documents without
-            the key denoted by `field`.
-            Essentially the opposite of whats documented
-            in the main doc description.
-            Defaults to ``False``
-        Returns
-        -------
-        """
-        existence = not where_field_doesnt_exist
-        return await self._document.find({field: {"$exists": existence}}).to_list(None)
-
-    @return_converted
-    async def find_by_id(
-        self, data_id: Any
-    ) -> Optional[Union[Dict[str, Any], Type[T]]]:
-        """
-        Find and return one item.
-        Parameters
-        ----------
-        data_id: Any
-            The _id of the item to find
-        Returns
-        -------
-        Optional[Union[Dict[str, Any], Type[T]]]
-            The result of the query
-        """
-        return await self.find_by_custom({"_id": data_id})
-
-    @return_converted
-    async def find_by_custom(
-        self, filter_dict: Dict[str, Any]
-    ) -> Optional[Union[Dict[str, Any], Type[T]]]:
-        """
-        Find and return one item.
-        Parameters
-        ----------
-        filter_dict: Dict[str, Any]
-            What to filter/find based on
-        Returns
-        -------
-        Optional[Union[Dict[str, Any], Type[T]]]
-            The result of the query
-        """
-        self.__ensure_dict(filter_dict)
-
-        return await self._document.find_one(filter_dict)
-
-    @return_converted
-    async def find_many_by_custom(
-        self, filter_dict: Union[Dict[str, Any], BuildAble]
-    ) -> List[Union[Dict[str, Any], Type[T]]]:
-        """
-        Find and return all items
-        matching the given filter
-        Parameters
-        ----------
-        filter_dict: Dict[str, Any]
-            What to filter/find based on
-        Returns
-        -------
-        List[Union[Dict[str, Any], Type[T]]]
-            The result of the query
-        """
         if isinstance(filter_dict, BuildAble):
             filter_dict = filter_dict.build()
 
-        self.__ensure_dict(filter_dict)
-
-        return await self._document.find(filter_dict).to_list(None)
-
-    async def delete_by_id(self, data_id: Any) -> Optional[DeleteResult]:
-        """
-        Delete an item from the Document
-        if an item with that _id exists
-        Parameters
-        ----------
-        data_id: Any
-            The _id to delete
-        Returns
-        -------
-        DeleteResult
-            The result of deletion
-        """
-        return await self.delete_by_custom({"_id": data_id})
-
-    async def delete_by_custom(
-        self, filter_dict: Dict[str, Any]
-    ) -> Optional[DeleteResult]:
-        """
-        Delete an item from the Document
-        matching the filter
-        Parameters
-        ----------
-        filter_dict: Any
-            Delete items matching this
-            dictionary
-        Returns
-        -------
-        DeleteResult
-            The result of deletion
-        """
-        self.__ensure_dict(filter_dict)
-
-        result: DeleteResult = await self._document.delete_many(filter_dict)
-        result: Optional[DeleteResult] = result if result.deleted_count != 0 else None
-        return result
+        return await self._document.find(filter_dict, *args, **kwargs).to_list(None)
 
     async def insert(self, data: Dict[str, Any]) -> None:
         """
@@ -473,27 +407,32 @@ class Document:
         await self._document.update_one(filter_dict, {"$inc": {field: amount}})
 
     async def update_field_to(
-        self, filter_dict: Union[Dict[Any, Any], Any], field: str, new_value: Any
+        self, filter_dict: Union[Dict[Any, Any], BuildAble], field: str, new_value: Any
     ) -> None:
         """
-        Modify a single field and change the value
+        Modify a single field and change the value.
+
         Parameters
         ----------
-        filter_dict: Union[Dict[Any, Any], Any]
-            The _id of the 'thing' we want to increment
+        filter_dict: Union[Dict[Any, Any], BuildAble]
+            A dictionary to use as a filter or
+            :py:class:`AQ` object.
         field: str
             The key for the field to increment
         new_value: Any
             What the field should get changed to
         """
-        filter_dict = self.__convert_filter(filter_dict)
+        if isinstance(filter_dict, BuildAble):
+            filter_dict = filter_dict.build()
+
         self.__ensure_dict(filter_dict)
         await self._document.update_one(filter_dict, {"$set": {field: new_value}})
 
     async def bulk_insert(self, data: List[Dict]) -> None:
         """
-        Given a List of Dictionaries, bulk insert all of
+        Given a List of Dictionaries, bulk insert all
         the given dictionaries in a single call.
+
         Parameters
         ----------
         data: List[Dict]
@@ -511,14 +450,6 @@ class Document:
     @staticmethod
     def __ensure_dict(data: Dict[str, Any]) -> None:
         assert isinstance(data, dict)
-
-    @staticmethod
-    def __ensure_id(data: Dict[str, Any]) -> None:
-        assert "_id" in data
-
-    @staticmethod
-    def __convert_filter(data: Union[Dict, Any]) -> Dict:
-        return data if isinstance(data, dict) else {"_id": data}
 
     # <-- Some basic internals -->
     @property

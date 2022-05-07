@@ -17,7 +17,7 @@ async def main():
     # await document.insert({"key": "one", "data": "test", "list": [1, 2, 3]})
     # await document.insert({"key": "two", "data": "test", "list": [1, 2, 3]})
 
-    r_1 = await document.find(EXISTS("key"))
+    r_1 = await document.find(AQ(EXISTS("key")))
     print(r_1)
 
     r_2 = await document.find({"key": "one"})
