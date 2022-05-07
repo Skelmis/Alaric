@@ -18,6 +18,7 @@ class NEGATE:
     * EXISTS
     * IN
     """
+
     def __init__(self, comparison: ComparisonT):
         self.comparison: ComparisonT = comparison
 

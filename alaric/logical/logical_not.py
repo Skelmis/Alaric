@@ -6,8 +6,11 @@ if TYPE_CHECKING:
     from alaric.abc import ComparisonT, LogicalT
 
 
-class OR:
-    """Conduct a logical OR between all items passed to the constructor."""
+class NOT:
+    """Invert the effect of a query expression.
+
+    This back-links to `here <https://www.mongodb.com/docs/manual/reference/operator/query/not/#mongodb-query-op.-not>`
+    """
 
     def __init__(
         self,
@@ -19,9 +22,9 @@ class OR:
         self.comparisons: List[Union[ComparisonT, LogicalT]] = list(comparisons)
 
     def __repr__(self):
-        return f"OR(comparisons={self.comparisons})"
+        return f"NOT(comparisons={self.comparisons})"
 
     def build(self) -> Dict[str, List[Dict]]:
         """Return this instance as a usable Mongo filter."""
         comparisons: List[Dict] = [c.build() for c in self.comparisons]
-        return {"$or": comparisons}
+        return {"$not": comparisons}

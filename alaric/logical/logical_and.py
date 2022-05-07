@@ -14,7 +14,7 @@ class AND:
         *comparisons: Union[
             Union[ComparisonT, LogicalT],
             List[Union[ComparisonT, LogicalT]],
-        ]
+        ],
     ):
         self.comparisons: List[Union[ComparisonT, LogicalT]] = list(comparisons)
 
