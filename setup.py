@@ -37,7 +37,7 @@ setup(
         "Homepage": "https://github.com/Skelmis/Alaric",
     },
     packages=find_packages(include=("alaric", "alaric.*")),
-    install_requires=[],
+    install_requires=["motor"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
