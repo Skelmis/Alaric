@@ -9,33 +9,6 @@ from alaric.abc import BuildAble
 T = TypeVar("T")
 
 
-def return_converted(func):
-    """
-    If we have a registered converter, this deco will
-    attempt to parse the given data into our provided
-    class through the use of dictionary unpacking.
-    """
-
-    @functools.wraps(func)
-    async def wrapped(*args, **kwargs):
-        data: Union[Dict, List[Dict]] = await func(*args, **kwargs)
-
-        self: Document = args[0]
-        if not data or not self.converter:
-            return data
-
-        if not isinstance(data, list):
-            return self.converter(**data)
-
-        new_data = []
-        for d in data:
-            new_data.append(self.converter(**d))
-
-        return new_data
-
-    return wrapped
-
-
 class Document:
     _version = 10
 
@@ -64,9 +37,8 @@ class Document:
         self.converter: Type[T] = converter
 
     def __repr__(self):
-        return f"<Document(document_name={self.document_name})>"
+        return f"<Document(document_name={self.collection_name})>"
 
-    @return_converted
     async def find(
         self, filter_dict: Union[Dict[str, Any], BuildAble]
     ) -> Optional[Union[Dict[str, Any], Type[T]]]:
@@ -85,9 +57,9 @@ class Document:
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
-        return await self._document.find_one(filter_dict)
+        data = await self._document.find_one(filter_dict)
+        return await self.attempt_convert(data)
 
-    @return_converted
     async def find_many(
         self, filter_dict: Union[Dict[str, Any], BuildAble]
     ) -> List[Union[Dict[str, Any], Type[T]]]:
@@ -108,7 +80,8 @@ class Document:
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
-        return await self._document.find(filter_dict).to_list(None)
+        data = await self._document.find(filter_dict).to_list(None)
+        return await self.attempt_convert(data)
 
     async def delete(
         self, filter_dict: Union[Dict, BuildAble]
@@ -134,7 +107,6 @@ class Document:
         result: Optional[DeleteResult] = result if result.deleted_count != 0 else None
         return result
 
-    @return_converted
     async def get_all(
         self,
         filter_dict: Optional[Union[Dict[str, Any], BuildAble]] = None,
@@ -169,7 +141,8 @@ class Document:
         filter_dict = filter_dict or {}
         filter_dict = self.__ensure_built(filter_dict)
 
-        return await self._document.find(filter_dict, *args, **kwargs).to_list(None)
+        data = await self._document.find(filter_dict, *args, **kwargs).to_list(None)
+        return await self.attempt_convert(data)
 
     async def insert(self, data: Dict[str, Any]) -> None:
         """Insert the provided data into the document.
@@ -327,10 +300,31 @@ class Document:
 
         return data
 
+    async def attempt_convert(
+        self, data: Union[Dict, List[Dict]]
+    ) -> Union[List[Union[Dict[str, Any], Type[T]]], Union[Dict[str, Any], Type[T]]]:
+        # This exists purely so we don't lose intelli-sense
+        # as decorators remove intelli-sense
+        if not data or not self.converter:
+            return data
+
+        if not isinstance(data, list):
+            return self.converter(**data)
+
+        new_data = []
+        for d in data:
+            new_data.append(self.converter(**d))
+
+        return new_data
+
     # <-- Some basic internals -->
     @property
     def collection_name(self) -> str:
         """The connected collections name."""
+        return self._document_name
+
+    @property
+    def document_name(self) -> str:
         return self._document_name
 
     @property

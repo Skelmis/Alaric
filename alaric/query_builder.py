@@ -11,37 +11,218 @@ from alaric.meta import *
 
 async def main():
     client = AsyncIOMotorClient(os.environ["MONGO"])
-    db = client["alaric_testing"]
-    document: Document = Document(db, "test")
+    db = client["COMPX323"]
+    document: Document = Document(db, "movies")
 
-    # await document.insert({"key": "one", "data": "test", "list": [1, 2, 3]})
-    # await document.insert({"key": "two", "data": "test", "list": [1, 2, 3]})
+    # 1)
+    r_1 = await document.find_many()
 
-    r_1 = await document.find(AQ(EXISTS("key")))
-    print(r_1)
-
-    r_2 = await document.find({"key": "one"})
-    print(r_2)
-
-    r_3 = await document.find(AND(EQ("key", "one"), EQ("data", "test")))
-    print(r_3)
-
-    r_4 = await document.find_many_by_custom(IN("key", ["one", "three"]))
-    print(r_4)
-
-    r_5 = await document.find_many_by_custom(NEGATE(IN("key", ["one", "three"])))
-    print(r_5)
-
-    r_6 = await document.find_many_by_custom(
-        AND(
-            OR(
-                EQ("key", "one"),
-                EQ("key", "two"),
-            ),
-            AND(EQ("data", "test"), EXISTS("list")),
-        )
-    )
-    print(r_6)
+    # Un-needed
+    # await document.bulk_insert(
+    #     [
+    #         {
+    #             "title": "Star Wars",
+    #             "year": 1977,
+    #             "director": "George Lucas",
+    #             "genre": "fantasy",
+    #             "actor": [
+    #                 {"name": "Mark Hamill"},
+    #                 {"name": "Carrie Fisher"},
+    #                 {"name": "Harrison Ford"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "Blade Runner",
+    #             "year": 1982,
+    #             "director": "Ridley Scott",
+    #             "genre": "scifi",
+    #             "actor": [{"name": "Harrison Ford"}],
+    #         },
+    #         {
+    #             "title": "The Empire Strikes Back",
+    #             "year": 1980,
+    #             "director": "Irvin Kershner",
+    #             "genre": "fantasy",
+    #             "actor": [
+    #                 {"name": "Mark Hamill"},
+    #                 {"name": "Carrie Fisher"},
+    #                 {"name": "Harrison Ford"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "Alien",
+    #             "year": 1979,
+    #             "director": "Ridley Scott",
+    #             "genre": "scifi",
+    #             "actor": [{"name": "Sigourney Weaver"}],
+    #         },
+    #         {
+    #             "title": "Aliens",
+    #             "year": 1986,
+    #             "director": "James Cameron",
+    #             "genre": "scifi",
+    #             "actor": [{"name": "Sigourney Weaver"}],
+    #         },
+    #         {
+    #             "title": "Toy Story",
+    #             "year": 1995,
+    #             "director": "John Lasseter",
+    #             "genre": "fantasy",
+    #             "actor": [{"name": "Tom Hanks"}, {"name": "Tim Allen"}],
+    #         },
+    #         {
+    #             "title": "Schindler's List",
+    #             "year": 1993,
+    #             "director": "Steven Spielberg",
+    #             "genre": "drama",
+    #             "actor": [{"name": "Liam Neeson"}],
+    #         },
+    #         {
+    #             "title": "E.T.",
+    #             "year": 1982,
+    #             "director": "Steven Spielberg",
+    #             "genre": "fantasy",
+    #             "actor": [{"name": "Henry Thomas"}],
+    #         },
+    #         {
+    #             "title": "Raiders of the Lost Ark",
+    #             "year": 1981,
+    #             "director": "Steven Spielberg",
+    #             "genre": "action",
+    #             "actor": [{"name": "Harrison Ford"}],
+    #         },
+    #         {
+    #             "title": "Minority Report",
+    #             "year": 2002,
+    #             "director": "Steven Spielberg",
+    #             "genre": "scifi",
+    #             "actor": [{"name": "Tom Cruise"}],
+    #         },
+    #         {
+    #             "title": "The Departed",
+    #             "year": 2006,
+    #             "director": "Martin Scorsese",
+    #             "genre": "thriller",
+    #             "actor": [
+    #                 {"name": "Leonardo Dicaprio"},
+    #                 {"name": "Jack Nicholson"},
+    #                 {"name": "Matt Damon"},
+    #                 {"name": "Mark Wahlberg"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "The Prestige",
+    #             "year": 2006,
+    #             "director": "Christopher Nolan",
+    #             "genre": "thriller",
+    #             "actor": [
+    #                 {"name": "Hugh Jackman"},
+    #                 {"name": "Christian Bale"},
+    #                 {"name": "Scarlett Johansson"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "Reservoir Dogs",
+    #             "year": 1992,
+    #             "director": "Quentin Tarantino",
+    #             "genre": "thriller",
+    #             "actor": [
+    #                 {"name": "Harvey Keitel"},
+    #                 {"name": "Tim Roth"},
+    #                 {"name": "Quentin Tarantino"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "Inglourious Basterds",
+    #             "year": 2009,
+    #             "director": "Quentin Tarantino",
+    #             "genre": "war",
+    #             "actor": [
+    #                 {"name": "Brad Pitt"},
+    #                 {"name": "Christoph Waltz"},
+    #                 {"name": "Melanie Laurent"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "Letters from Iwo Jima",
+    #             "year": 2006,
+    #             "director": "Clint Eastwood",
+    #             "genre": "war",
+    #             "actor": [{"name": "Ken Watanabe"}],
+    #         },
+    #         {
+    #             "title": "Slumdog Millionaire",
+    #             "year": 2008,
+    #             "director": "Danny Boyle",
+    #             "genre": "drama",
+    #             "actor": [{"name": "Dev Patel"}],
+    #         },
+    #         {
+    #             "title": "Django Unchained",
+    #             "year": 2012,
+    #             "director": "Quentin Tarantino",
+    #             "genre": "action",
+    #             "actor": [
+    #                 {"name": "Jamie Foxx"},
+    #                 {"name": "Christoph Waltz"},
+    #                 {"name": "Leonardo Dicaprio"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "The Dark Knight",
+    #             "year": 2008,
+    #             "director": "Christopher Nolan",
+    #             "genre": "thriller",
+    #             "actor": [
+    #                 {"name": "Christian Bale"},
+    #                 {"name": "Heath Ledger"},
+    #                 {"name": "Michael Caine"},
+    #             ],
+    #         },
+    #         {
+    #             "title": "Memento",
+    #             "year": 2005,
+    #             "director": "Christopher Nolan",
+    #             "genre": "thriller",
+    #             "actor": [{"name": "Guy Pearce"}],
+    #         },
+    #         {
+    #             "title": "127 Hours",
+    #             "year": 2010,
+    #             "director": "Danny Boyle",
+    #             "genre": "drama",
+    #             "actor": [{"name": "James Franco"}],
+    #         },
+    #         {
+    #             "title": "Birdman",
+    #             "year": 2014,
+    #             "director": "Alejandro Gonzalez Innaritu",
+    #             "genre": "comedy",
+    #             "actor": [{"name": "Michael Keaton"}, {"name": "Edward Norton"}],
+    #         },
+    #         {
+    #             "title": "The Shining",
+    #             "year": 1980,
+    #             "director": "Stanley Kubrick",
+    #             "genre": "horror",
+    #             "actor": [{"name": "Jack Nicholson"}],
+    #         },
+    #         {
+    #             "title": "Kill Bill Volume 1",
+    #             "year": 2003,
+    #             "director": "Quentin Tarantino",
+    #             "genre": "action",
+    #             "actor": [{"name": "Uma Thurman"}],
+    #         },
+    #         {
+    #             "title": "La La Land",
+    #             "year": 2016,
+    #             "director": "Damien Chazelle",
+    #             "genre": "romance",
+    #             "actor": [{"name": "Emma Stone"}, {"name": "Ryan Gosling"}],
+    #         },
+    #     ]
+    # )
 
 
 if __name__ == "__main__":
