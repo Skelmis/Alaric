@@ -15,7 +15,53 @@ async def main():
     document: Document = Document(db, "movies")
 
     # 1)
-    r_1 = await document.find_many()
+    r_1 = await document.find_many(AQ(EQ("director", "Steven Spielberg")))
+    print(r_1)
+
+    # 2)
+    r_2 = await document.find_many(AQ(EQ("actor", {"name": "Mark Hamill"})))
+    print(r_2)
+
+    # 3)
+    r_3 = await document.find_many(
+        AQ(
+            AND(
+                EQ("director", "Quentin Tarantino"),
+                EQ("actor", {"name": "Quentin Tarantino"}),
+            ),
+        )
+    )
+    print(r_3)
+
+    # 4)
+    r_4 = await document.find_many({"$query": {}, "$orderby": {"year": 1}})
+    print(r_4)
+
+    # 5)
+    r_5 = await document.find_many(AQ(IN("genre", ["action", "fantasy"])))
+    print(r_5)
+
+    # 6)
+    r_6 = await document.find_many(AQ(GT("year", 2005)))
+    print(r_6)
+
+    # 7)
+    r_7 = await document.find_many(
+        AQ(
+            AND(
+                EQ("director", "Quentin Tarantino"),
+                OR(
+                    EQ("actor", {"name": "Christoph Waltz"}),
+                    EQ("actor", {"name": "Leonardo DiCaprio"}),
+                ),
+            )
+        )
+    )
+    print(r_7)
+
+    # 8)
+    r_8 = await document.count(EQ("director", "Quentin Tarantino"))
+    print(r_8)
 
     # Un-needed
     # await document.bulk_insert(

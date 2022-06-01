@@ -270,6 +270,23 @@ class Document:
         self.__ensure_dict(filter_dict)
         await self._document.update_one(filter_dict, {"$set": {field: new_value}})
 
+    async def count(self, filter_dict: Union[Dict[Any, Any], BuildAble]) -> int:
+        """Return a count of how many items match the filter.
+
+        Parameters
+        ----------
+        filter_dict:  Union[Dict[Any, Any], BuildAble]
+            The count filer.
+
+        Returns
+        -------
+        int
+            How many items matched the filter.
+        """
+        filter_dict = self.__ensure_built(filter_dict)
+        self.__ensure_dict(filter_dict)
+        return await self._document.count_documents(filter_dict)
+
     async def bulk_insert(self, data: List[Dict]) -> None:
         """
         Given a List of Dictionaries, bulk insert all

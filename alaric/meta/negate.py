@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict
 
-from alaric.comparison import IN
+from alaric.comparison import IN, GT, LT
 from alaric.comparison.comparison_exists import EXISTS
 
 if TYPE_CHECKING:
@@ -33,5 +33,11 @@ class NEGATE:
         elif isinstance(self.comparison, IN):
             self.comparison._operator = "$nin"
             return self.comparison.build()
+
+        elif isinstance(self.comparison, GT):
+            raise RuntimeError("Cannot negate GT, use LT instead.")
+
+        elif isinstance(self.comparison, LT):
+            raise RuntimeError("Cannot negate LT, use GT instead.")
 
         raise RuntimeError("Invalid wrapped comparison.")
