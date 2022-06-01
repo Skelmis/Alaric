@@ -329,13 +329,16 @@ class Document:
 
     # <-- Some basic internals -->
     @property
-    def document_name(self) -> str:
+    def collection_name(self) -> str:
+        """The connected collections name."""
         return self._document_name
 
     @property
     def raw_database(self) -> AsyncIOMotorDatabase:
+        """Access to the database instance."""
         return self._database
 
     @property
     def raw_collection(self) -> AsyncIOMotorCollection:
+        """The connection collection instance."""
         return self._document
