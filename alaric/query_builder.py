@@ -14,15 +14,15 @@ async def main():
     db = client["COMPX323"]
     document: Document = Document(db, "movies")
 
-    # 1)
+    # 1) {'director': {'$eq': 'Steven Spielberg'}}
     r_1 = await document.find_many(AQ(EQ("director", "Steven Spielberg")))
     print(r_1)
 
-    # 2)
+    # 2) {'actor': {'$eq': {'name': 'Mark Hamill'}}}
     r_2 = await document.find_many(AQ(EQ("actor", {"name": "Mark Hamill"})))
     print(r_2)
 
-    # 3)
+    # 3) {'$and': [{'director': {'$eq': 'Quentin Tarantino'}}, {'actor': {'$eq': {'name': 'Quentin Tarantino'}}}]}
     r_3 = await document.find_many(
         AQ(
             AND(
@@ -33,19 +33,19 @@ async def main():
     )
     print(r_3)
 
-    # 4)
+    # 4) {"$query": {}, "$orderby": {"year": 1}}
     r_4 = await document.find_many({"$query": {}, "$orderby": {"year": 1}})
     print(r_4)
 
-    # 5)
+    # 5) {'genre': {'$in': ['action', 'fantasy']}}
     r_5 = await document.find_many(AQ(IN("genre", ["action", "fantasy"])))
     print(r_5)
 
-    # 6)
+    # 6) {'year': {'$gt': 2005}}
     r_6 = await document.find_many(AQ(GT("year", 2005)))
     print(r_6)
 
-    # 7)
+    # 7) {'$and': [{'director': {'$eq': 'Quentin Tarantino'}}, {'$or': [{'actor': {'$eq': {'name': 'Christoph Waltz'}}}, {'actor': {'$eq': {'name': 'Leonardo DiCaprio'}}}]}]}
     r_7 = await document.find_many(
         AQ(
             AND(
@@ -59,11 +59,15 @@ async def main():
     )
     print(r_7)
 
-    # 8)
+    # 8) {'director': {'$eq': 'Quentin Tarantino'}}
     r_8 = await document.count(EQ("director", "Quentin Tarantino"))
     print(r_8)
 
-    # Un-needed
+    # 9) {'year': {'$lt': 2000}}
+    r_9 = await document.count(LT("year", 2000))
+    print(r_9)
+
+    # Un-needed after initial run
     # await document.bulk_insert(
     #     [
     #         {
