@@ -43,6 +43,8 @@ class Document:
         self,
         filter_dict: Union[Dict[str, Any], BuildAble],
         projections: Union[Dict[str, Any], BuildAble],
+        *,
+        try_convert: bool = True,
     ) -> Optional[Union[Dict[str, Any], Type[T]]]:
         """Find and return one item.
 
@@ -54,6 +56,11 @@ class Document:
         projections: Union[Dict[str, Any], BuildAble]
             Specify the data you want
             returned from matching queries.
+        try_convert: bool
+            Whether to attempt to
+            run convertors on returned data.
+
+            Defaults to True
 
         Returns
         -------
@@ -66,12 +73,17 @@ class Document:
         projections = self.__ensure_built(projections)
 
         data = await self._document.find_one(filter_dict, projections)
-        return await self.attempt_convert(data)
+
+        if try_convert:
+            return await self.attempt_convert(data)
+        return data
 
     async def find_many(
         self,
         filter_dict: Union[Dict[str, Any], BuildAble],
         projections: Union[Dict[str, Any], BuildAble],
+        *,
+        try_convert: bool = True,
     ) -> List[Union[Dict[str, Any], Type[T]]]:
         """
         Find and return all items
@@ -85,6 +97,11 @@ class Document:
         projections: Union[Dict[str, Any], BuildAble]
             Specify the data you want
             returned from matching queries.
+        try_convert: bool
+            Whether to attempt to
+            run convertors on returned data.
+
+            Defaults to True
 
         Returns
         -------
@@ -97,7 +114,10 @@ class Document:
         projections = self.__ensure_built(projections)
 
         data = await self._document.find(filter_dict, projections).to_list(None)
-        return await self.attempt_convert(data)
+
+        if try_convert:
+            return await self.attempt_convert(data)
+        return data
 
     async def delete(
         self,
@@ -129,6 +149,7 @@ class Document:
         filter_dict: Optional[Union[Dict[str, Any], BuildAble]] = None,
         projections: Union[Dict[str, Any], BuildAble] = None,
         *args: Any,
+        try_convert: bool = True,
         **kwargs: Any,
     ) -> List[Optional[Union[Dict[str, Any], Type[T]]]]:
         """
@@ -153,6 +174,11 @@ class Document:
         projections: Union[Dict[str, Any], BuildAble]
             Specify the data you want
             returned from matching queries.
+        try_convert: bool
+            Whether to attempt to
+            run convertors on returned data.
+
+            Defaults to True
 
         Returns
         -------
@@ -168,7 +194,10 @@ class Document:
         data = await self._document.find(
             filter_dict, projections, *args, **kwargs
         ).to_list(None)
-        return await self.attempt_convert(data)
+
+        if try_convert:
+            return await self.attempt_convert(data)
+        return data
 
     async def insert(self, data: Dict[str, Any]) -> None:
         """Insert the provided data into the document.
