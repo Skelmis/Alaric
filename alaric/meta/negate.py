@@ -17,6 +17,7 @@ class NEGATE:
 
     * EXISTS
     * IN
+    * PROJECTION
     """
 
     def __init__(self, comparison: ComparisonT):

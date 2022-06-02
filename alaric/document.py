@@ -40,7 +40,9 @@ class Document:
         return f"<Document(document_name={self.collection_name})>"
 
     async def find(
-        self, filter_dict: Union[Dict[str, Any], BuildAble]
+        self,
+        filter_dict: Union[Dict[str, Any], BuildAble],
+        projections: Union[Dict[str, Any], BuildAble],
     ) -> Optional[Union[Dict[str, Any], Type[T]]]:
         """Find and return one item.
 
@@ -49,6 +51,9 @@ class Document:
         filter_dict: Union[Dict, BuildAble]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
+        projections: Union[Dict[str, Any], BuildAble]
+            Specify the data you want
+            returned from matching queries.
 
         Returns
         -------
@@ -57,11 +62,16 @@ class Document:
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
-        data = await self._document.find_one(filter_dict)
+        projections = projections or {}
+        projections = self.__ensure_built(projections)
+
+        data = await self._document.find_one(filter_dict, projections)
         return await self.attempt_convert(data)
 
     async def find_many(
-        self, filter_dict: Union[Dict[str, Any], BuildAble]
+        self,
+        filter_dict: Union[Dict[str, Any], BuildAble],
+        projections: Union[Dict[str, Any], BuildAble],
     ) -> List[Union[Dict[str, Any], Type[T]]]:
         """
         Find and return all items
@@ -72,6 +82,9 @@ class Document:
         filter_dict: Dict[str, Any]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
+        projections: Union[Dict[str, Any], BuildAble]
+            Specify the data you want
+            returned from matching queries.
 
         Returns
         -------
@@ -80,11 +93,15 @@ class Document:
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
-        data = await self._document.find(filter_dict).to_list(None)
+        projections = projections or {}
+        projections = self.__ensure_built(projections)
+
+        data = await self._document.find(filter_dict, projections).to_list(None)
         return await self.attempt_convert(data)
 
     async def delete(
-        self, filter_dict: Union[Dict, BuildAble]
+        self,
+        filter_dict: Union[Dict, BuildAble],
     ) -> Optional[DeleteResult]:
         """
         Delete an item from the Document
@@ -110,6 +127,7 @@ class Document:
     async def get_all(
         self,
         filter_dict: Optional[Union[Dict[str, Any], BuildAble]] = None,
+        projections: Union[Dict[str, Any], BuildAble] = None,
         *args: Any,
         **kwargs: Any,
     ) -> List[Optional[Union[Dict[str, Any], Type[T]]]]:
@@ -132,6 +150,9 @@ class Document:
         filter_dict: Optional[Dict[str, Any]]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
+        projections: Union[Dict[str, Any], BuildAble]
+            Specify the data you want
+            returned from matching queries.
 
         Returns
         -------
@@ -141,7 +162,12 @@ class Document:
         filter_dict = filter_dict or {}
         filter_dict = self.__ensure_built(filter_dict)
 
-        data = await self._document.find(filter_dict, *args, **kwargs).to_list(None)
+        projections = projections or {}
+        projections = self.__ensure_built(projections)
+
+        data = await self._document.find(
+            filter_dict, projections, *args, **kwargs
+        ).to_list(None)
         return await self.attempt_convert(data)
 
     async def insert(self, data: Dict[str, Any]) -> None:
