@@ -181,6 +181,25 @@ class Document:
         result: Optional[DeleteResult] = result if result.deleted_count != 0 else None
         return result
 
+    async def delete_all(self) -> None:
+        """Delete all data associated with this document.
+
+        Notes
+        -----
+        This will attempt to complete the operation
+        in a single call, however, if that fails it
+        will fall back to manually deleting items one by one.
+
+        Warnings
+        --------
+        There is no going back if you call this accidentally.
+        """
+        try:
+            await self._database.drop_collection(self._document)
+        except:
+            for entry in await self.get_all(try_convert=False):
+                await self.delete(entry)
+
     async def get_all(
         self,
         filter_dict: Optional[Union[Dict[str, Any], BuildAble]] = None,
