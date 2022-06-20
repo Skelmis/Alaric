@@ -8,3 +8,5 @@ This is the most general use-case for Alaric, where-in you use the ``Document`` 
 .. autoclass:: Document
     :members:
     :undoc-members:
+    :special-members: __init__
+

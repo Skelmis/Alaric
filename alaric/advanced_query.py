@@ -12,12 +12,14 @@ class AQ:
     item: Union[ComparisonT, LogicalT]]
         The parent item we wish to build upon.
 
+
     .. code-block:: python
 
         from alaric import AQ
+        from alaric.logical import AND
+        from alaric.comparison import EQ, EXISTS
 
-        query = AQ(...)
-        # query = AQ(AND(EQ(..., ...), EXISTS(...)))
+        query = AQ(AND(EQ("id", 1), EXISTS("prefix")))
     """
 
     def __init__(

@@ -5,7 +5,7 @@ class EXISTS:
     """
     Returns all documents that contain this field.
 
-    This class can be used in conjunction with :py:class:`NEGATE`
+    This class can be used in conjunction with :py:class:`~alaric.meta.NEGATE`
 
     Parameters
     ----------

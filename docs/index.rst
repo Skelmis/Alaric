@@ -11,6 +11,7 @@ Welcome to Alaric's documentation!
    :caption: Contents:
 
    modules/main.rst
+   modules/objects/abc.rst
 
 .. toctree::
    :maxdepth: 2
@@ -28,6 +29,7 @@ Welcome to Alaric's documentation!
    modules/objects/advanced_query.rst
    modules/objects/logical_t.rst
    modules/objects/comparison_t.rst
+   modules/extra.rst
 
 
 

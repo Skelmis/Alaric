@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class NOT:
     """Invert the effect of a query expression.
 
-    This back-links to `here <https://www.mongodb.com/docs/manual/reference/operator/query/not/#mongodb-query-op.-not>`
+    This back-links to `here <https://www.mongodb.com/docs/manual/reference/operator/query/not/#mongodb-query-op.-not>`_
     """
 
     def __init__(

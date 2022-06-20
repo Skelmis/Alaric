@@ -1,4 +1,3 @@
-import functools
 from typing import List, Dict, Optional, Union, Any, TypeVar, Type
 
 from pymongo.results import DeleteResult
@@ -7,6 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 from alaric.abc import BuildAble
 
 T = TypeVar("T")
+"""A typevar representing the type of a given converter class"""
 
 
 class Document:
@@ -25,7 +25,7 @@ class Document:
             The database we are connected to
         document_name: str
             What this _document should be called
-        converter: Optional[Type[T]]
+        converter: Optional[Type[:py:class:`~alaric.document.T`]]
             An optional class to try
             to convert all data-types which
             return either Dict or List into
@@ -64,7 +64,7 @@ class Document:
 
         Returns
         -------
-        Optional[Union[Dict[str, Any], Type[T]]]
+        Optional[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]
             The result of the query
         """
         filter_dict = self.__ensure_built(filter_dict)
@@ -78,7 +78,7 @@ class Document:
             data = await self._document.find_one(filter_dict)
 
         if try_convert:
-            return await self.attempt_convert(data)
+            return await self._attempt_convert(data)
         return data
 
     async def find_many(
@@ -108,7 +108,7 @@ class Document:
 
         Returns
         -------
-        List[Union[Dict[str, Any], Type[T]]]
+        List[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]
             The result of the query
         """
         filter_dict = self.__ensure_built(filter_dict)
@@ -122,7 +122,7 @@ class Document:
             data = await self._document.find(filter_dict).to_list(None)
 
         if try_convert:
-            return await self.attempt_convert(data)
+            return await self._attempt_convert(data)
         return data
 
     async def delete(
@@ -165,6 +165,7 @@ class Document:
         Example usages
 
         .. code-block:: python
+
             results = await document.get_all()
 
             ...
@@ -188,7 +189,7 @@ class Document:
 
         Returns
         -------
-        List[Optional[Union[Dict[str, Any], Type[T]]]]
+        List[Optional[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]]
             The items matching the filter
         """
         filter_dict = filter_dict or {}
@@ -205,7 +206,7 @@ class Document:
             data = await self._document.find(filter_dict, *args, **kwargs).to_list(None)
 
         if try_convert:
-            return await self.attempt_convert(data)
+            return await self._attempt_convert(data)
         return data
 
     async def insert(self, data: Dict[str, Any]) -> None:
@@ -238,6 +239,7 @@ class Document:
         option: str
             The optional option to pass to mongo,
             default is set
+
             https://www.mongodb.com/docs/manual/reference/operator/update/
         """
         filter_dict = self.__ensure_built(filter_dict)
@@ -266,6 +268,7 @@ class Document:
             The data to upsert
         option: str
             Update operator.
+
             https://www.mongodb.com/docs/manual/reference/operator/update/
         """
         filter_dict = self.__ensure_built(filter_dict)
@@ -381,7 +384,7 @@ class Document:
 
         return data
 
-    async def attempt_convert(
+    async def _attempt_convert(
         self, data: Union[Dict, List[Dict]]
     ) -> Union[List[Union[Dict[str, Any], Type[T]]], Union[Dict[str, Any], Type[T]]]:
         # This exists purely so we don't lose intelli-sense
@@ -406,6 +409,7 @@ class Document:
 
     @property
     def document_name(self) -> str:
+        """Same as :py:meth:`~alaric.Document.collection_name`"""
         return self._document_name
 
     @property

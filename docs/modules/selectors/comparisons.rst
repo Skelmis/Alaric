@@ -22,3 +22,24 @@ Contains
     :members:
     :undoc-members:
 
+Existence
+---------
+
+.. autoclass:: EXISTS
+    :members:
+    :undoc-members:
+
+Greater then
+------------
+
+.. autoclass:: GT
+    :members:
+    :undoc-members:
+
+Less then
+---------
+
+.. autoclass:: LT
+    :members:
+    :undoc-members:
+

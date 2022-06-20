@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
+    "sphinx_toolbox.more_autodoc.typevars",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -48,4 +49,9 @@ master_doc = "index"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    "typing": ("https://docs.python.org/3", None),
+    "motor": ("https://motor.readthedocs.io/en/stable", None),
+    "pymongo": ("https://pymongo.readthedocs.io/en/stable/", None),
 }
+
+all_typevars = True

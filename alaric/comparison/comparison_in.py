@@ -5,7 +5,7 @@ class IN:
     """
     Asserts the provided field is within the provided values.
 
-    This class can be used in conjunction with :py:class:`NEGATE`
+    This class can be used in conjunction with :py:class:`alaric.meta.NEGATE`
 
     Parameters
     ----------
