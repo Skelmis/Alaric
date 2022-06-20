@@ -3,6 +3,8 @@ Alaric
 
 Providing a beautiful way to interact with MongoDB asynchronously in Python.
 
+---
+
 ### Example usage
 
 A simplistic example, read more on the docs!
@@ -20,6 +22,8 @@ await config_document.insert({"_id": 1, "data": "hello world"})
 ...
 data = await config_document.find({"_id": 1})
 ```
+
+---
 
 #### Docs can be found [here](https://alaric.readthedocs.io/)
 
