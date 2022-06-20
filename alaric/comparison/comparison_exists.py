@@ -11,6 +11,16 @@ class EXISTS:
     ----------
     field: str
         The field to check in.
+
+
+    Lets match all documents where the field ``prefix`` exists
+
+    .. code-block:: python
+
+        from alaric import AQ
+        from alaric.comparison import EXISTS
+
+        query = AQ(EXISTS("prefix"))
     """
 
     def __init__(self, field: str):

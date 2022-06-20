@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Dict
 
 from alaric.comparison import IN, GT, LT
@@ -7,6 +8,8 @@ from alaric.comparison.comparison_exists import EXISTS
 
 if TYPE_CHECKING:
     from alaric.abc import ComparisonT
+
+log = logging.getLogger(__name__)
 
 
 class NEGATE:
@@ -17,6 +20,11 @@ class NEGATE:
 
     * :py:class:`~alaric.comparison.EXISTS`
     * :py:class:`~alaric.comparison.IN`
+    * :py:class:`~alaric.comparison.GT`
+    * :py:class:`~alaric.comparison.LT`
+
+
+    Lets get all documents *without* a field called ``prefix``
 
     .. code-block:: python
         :linenos:
@@ -25,7 +33,7 @@ class NEGATE:
         from alaric.meta import NEGATE
         from alaric import AQ
 
-        query = AQ(NEGATE(EXISTS("field")))
+        query = AQ(NEGATE(EXISTS("prefix")))
     """
 
     def __init__(self, comparison: ComparisonT):
@@ -45,9 +53,11 @@ class NEGATE:
             return self.comparison.build()
 
         elif isinstance(self.comparison, GT):
-            raise RuntimeError("Cannot negate GT, use LT instead.")
+            log.debug("Use LT rather then negating GT")
+            self.comparison = LT(self.comparison.field, self.comparison.value)
 
         elif isinstance(self.comparison, LT):
-            raise RuntimeError("Cannot negate LT, use GT instead.")
+            log.debug("Use GT rather then negating LT")
+            self.comparison = GT(self.comparison.field, self.comparison.value)
 
         raise RuntimeError("Invalid wrapped comparison.")

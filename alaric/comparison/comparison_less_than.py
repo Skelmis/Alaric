@@ -5,12 +5,25 @@ class LT:
     """
     Asserts the provided field is less to the provided value.
 
+    This class can be used in conjunction with :py:class:`~alaric.meta.NEGATE`
+
     Parameters
     ----------
     field: str
         The field to check in.
     value: Union[int, str, float, bytes, dict]
         The value the field should be less than.
+
+
+    Lets match all documents where the field ``counter``
+    is less then 5.
+
+    .. code-block:: python
+
+        from alaric import AQ
+        from alaric.comparison import LT
+
+        query = AQ(LT("counter", 5))
     """
 
     def __init__(self, field: str, value: Union[int, str, float, bytes]):

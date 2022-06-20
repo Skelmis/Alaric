@@ -16,6 +16,16 @@ class EQ:
     -----
     This also works on matching items in arrays
     in an OR based matching approach.
+
+
+    Lets match a document with an ``_id`` equal to ``1``
+
+    .. code-block:: python
+
+        from alaric import AQ
+        from alaric.comparison import EQ
+
+        query = AQ(EQ("_id", 1))
     """
 
     def __init__(self, field: str, value: Union[int, str, float, bytes, dict]):

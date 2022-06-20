@@ -11,22 +11,21 @@ Welcome to Alaric's documentation!
    :caption: Contents:
 
    modules/main.rst
-   modules/objects/abc.rst
 
 .. toctree::
    :maxdepth: 2
    :caption: Advanced Usage:
 
+   modules/objects/advanced_query.rst
    modules/selectors/comparisons.rst
    modules/selectors/logical.rst
    modules/selectors/meta.rst
-   modules/selectors/examples.rst
 
 .. toctree::
    :maxdepth: 1
    :caption: Object Reference:
 
-   modules/objects/advanced_query.rst
+   modules/objects/abc.rst
    modules/objects/logical_t.rst
    modules/objects/comparison_t.rst
    modules/extra.rst

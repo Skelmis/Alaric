@@ -15,6 +15,9 @@ class AQ:
 
     .. code-block:: python
 
+        # A query to fetch all items
+        # where the `id` field is equal to `1`
+        # AND the document contains a `prefix` field
         from alaric import AQ
         from alaric.logical import AND
         from alaric.comparison import EQ, EXISTS

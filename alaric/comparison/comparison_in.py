@@ -13,6 +13,17 @@ class IN:
         The field to check in.
     value: Union[list, tuple, set]
         A iterable of values that field should be in.
+
+
+    Lets match all documents where the field ``counter``
+    is equal to any number in this list.
+
+    .. code-block:: python
+
+        from alaric import AQ
+        from alaric.comparison import IN
+
+        query = AQ(IN("counter", [1, 3, 5, 7, 9]))
     """
 
     def __init__(self, field: str, value: Union[list, tuple, set]):
