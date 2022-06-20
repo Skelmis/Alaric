@@ -29,6 +29,16 @@ class Document:
             An optional class to try
             to convert all data-types which
             return either Dict or List into
+
+
+        .. code-block:: python
+            :linenos:
+
+            from motor.motor_asyncio import AsyncIOMotorClient
+
+            client = AsyncIOMotorClient(connection_url)
+            database = client["my_database"]
+            config_document = Document(database, "config")
         """
         self._document_name: str = document_name
         self._database: AsyncIOMotorDatabase = database
@@ -66,6 +76,13 @@ class Document:
         -------
         Optional[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]
             The result of the query
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Find the document where the `_id` field is equal to `my_id`
+            data: dict = await Document.find({"_id": "my_id"})
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -110,6 +127,13 @@ class Document:
         -------
         List[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]
             The result of the query
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Find all documents where the key `my_field` is `true`
+            data: list[dict] = await Document.find_many({"my_field": True})
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -143,6 +167,13 @@ class Document:
         -------
         Optional[DeleteResult]
             The result of deletion if it occurred.
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Delete items with a `prefix` of `!`
+            await Document.delete({"prefix": "!"})
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -162,17 +193,6 @@ class Document:
         Fetches and returns all items
         which match the given filter.
 
-        Example usages
-
-        .. code-block:: python
-
-            results = await document.get_all()
-
-            ...
-
-            # Get all documents with a given field
-            results = await document.get_all(AQ(EXISTS("field")))
-
         Parameters
         ----------
         filter_dict: Optional[Dict[str, Any]]
@@ -191,6 +211,12 @@ class Document:
         -------
         List[Optional[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]]
             The items matching the filter
+
+
+        .. code-block:: python
+            :linenos:
+
+            data: list[dict] = await Document.get_all()
         """
         filter_dict = filter_dict or {}
         filter_dict = self.__ensure_built(filter_dict)
@@ -216,6 +242,14 @@ class Document:
         ----------
         data: Dict[str, Any]
             The data to insert
+
+
+        .. code-block:: python
+            :linenos:
+
+            # If you don't provide an _id,
+            # Mongo will generate one for you automatically
+            await Document.insert({"_id": 1, "data": "hello world"})
         """
         self.__ensure_dict(data)
         await self._document.insert_one(data)
@@ -241,6 +275,14 @@ class Document:
             default is set
 
             https://www.mongodb.com/docs/manual/reference/operator/update/
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Update the document with an `_id` of 1
+            # So that it now equals the second argument
+            await Document.update({"_id": 1}, {"_id": 1, "data": "new data"})
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -270,6 +312,17 @@ class Document:
             Update operator.
 
             https://www.mongodb.com/docs/manual/reference/operator/update/
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Update the document with an `_id` of `1`
+            # So that it now equals the second argument
+            # NOTE: If a document with an `_id` of `1`
+            # does not exist, then this method will
+            # insert the data instead.
+            await Document.update({"_id": 1}, {"_id": 1, "data": "new data"})
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -289,6 +342,17 @@ class Document:
             The fields to match on (Think _id)
         field: Any
             The field to remove
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Assuming we have a document that looks like
+            # {"_id": 1, "field_one": True, "field_two": False}
+            await Document.unset({"_id": 1}, "field_two")
+
+            # This data will now look like the following
+            # {"_id": 1, "field_one": True}
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -310,6 +374,22 @@ class Document:
             The key for the field to increment
         amount: Union[int, float]
             How much to increment (or decrement) by
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Assuming a data structure of
+            # {"_id": 1, "counter": 4}
+            await Document.increment({"_id": 1}, "counter", 1)
+
+            # Now looks like
+            # {"_id": 1, "counter": 5}
+
+        Notes
+        -----
+        You can also use negative numbers to
+        decrease the count of a field.
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -332,6 +412,17 @@ class Document:
             The key for the field to increment
         new_value: Any
             What the field should get changed to
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Assuming a data structure of
+            # {"_id": 1, "prefix": "!"}
+            await Document.change_field_to({"_id": 1}, "prefix", "?"
+
+            # This will now look like
+            # {"_id": 1, "prefix": "?"}
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -349,6 +440,13 @@ class Document:
         -------
         int
             How many items matched the filter.
+
+
+        .. code-block:: python
+            :linenos:
+
+            # How many items have the `enabled` field set to True
+            count: int = await Document.count({"enabled": True})
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
@@ -363,6 +461,16 @@ class Document:
         ----------
         data: List[Dict]
             The data to bulk insert
+
+
+        .. code-block:: python
+            :linenos:
+
+            # Insert 25 documents
+            await Document.bulk_insert(
+                {"_id": i}
+                for i in range(25)
+            )
         """
         self.__ensure_list_of_dicts(data)
         await self._document.insert_many(data)
