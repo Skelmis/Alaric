@@ -45,3 +45,10 @@ This project is licensed under the MIT license
 Want a feature added? Want me to help build your software using Alaric?
 
 Sponsor me [here](https://github.com/sponsors/Skelmis)
+
+---
+
+#### Development
+
+In order to make development easier, I recommend using [motor-stubs](https://github.com/Yian8068/motor-stubs)
+if you're planning on doing more than Alaric has to offer. I.e. Using motor itself.

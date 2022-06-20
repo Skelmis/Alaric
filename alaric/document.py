@@ -195,7 +195,7 @@ class Document:
         There is no going back if you call this accidentally.
         """
         try:
-            await self._database.drop_collection(self._document)
+            await self._document.drop()
         except:
             for entry in await self.get_all(try_convert=False):
                 await self.delete(entry)
