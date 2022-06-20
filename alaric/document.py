@@ -72,7 +72,10 @@ class Document:
         projections = projections or {}
         projections = self.__ensure_built(projections)
 
-        data = await self._document.find_one(filter_dict, projections)
+        if projections:
+            data = await self._document.find_one(filter_dict, projections)
+        else:
+            data = await self._document.find_one(filter_dict)
 
         if try_convert:
             return await self.attempt_convert(data)
@@ -113,7 +116,10 @@ class Document:
         projections = projections or {}
         projections = self.__ensure_built(projections)
 
-        data = await self._document.find(filter_dict, projections).to_list(None)
+        if projections:
+            data = await self._document.find(filter_dict, projections).to_list(None)
+        else:
+            data = await self._document.find(filter_dict).to_list(None)
 
         if try_convert:
             return await self.attempt_convert(data)
@@ -191,9 +197,12 @@ class Document:
         projections = projections or {}
         projections = self.__ensure_built(projections)
 
-        data = await self._document.find(
-            filter_dict, projections, *args, **kwargs
-        ).to_list(None)
+        if projections:
+            data = await self._document.find(
+                filter_dict, projections, *args, **kwargs
+            ).to_list(None)
+        else:
+            data = await self._document.find(filter_dict, *args, **kwargs).to_list(None)
 
         if try_convert:
             return await self.attempt_convert(data)
