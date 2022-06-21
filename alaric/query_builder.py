@@ -15,8 +15,7 @@ async def main():
     db = client["COMPX323"]
     document: Document = Document(db, "movies")
 
-    r_1 = await document.get_all(projections=PROJECTION(HIDE("director", "_id")))
-    print(r_1)
+    await document.find_many(f)
 
 
 if __name__ == "__main__":

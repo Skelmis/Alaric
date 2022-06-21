@@ -48,7 +48,7 @@ class Document:
         self.converter: Type[T] = converter
 
     def __repr__(self):
-        return f"<Document(document_name={self.collection_name})>"
+        return f"<Document(collection_name={self.collection_name})>"
 
     async def find(
         self,
