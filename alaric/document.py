@@ -225,7 +225,7 @@ class Document:
         filter_dict: Union[Dict[str, Any], BuildAble]
             The data to filter on
         update_data: Dict[str, Any]
-            The data to upsert
+            The data to update
         option: str
             The optional option to pass to mongo,
             default is set
