@@ -341,7 +341,7 @@ class Document:
             # NOTE: If a document with an `_id` of `1`
             # does not exist, then this method will
             # insert the data instead.
-            await Document.update({"_id": 1}, {"_id": 1, "data": "new data"})
+            await Document.upsert({"_id": 1}, {"_id": 1, "data": "new data"})
         """
         filter_dict = self.__ensure_built(filter_dict)
         self.__ensure_dict(filter_dict)
