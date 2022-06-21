@@ -35,6 +35,7 @@ class Document:
             :linenos:
 
             from motor.motor_asyncio import AsyncIOMotorClient
+            from alaric import Document
 
             client = AsyncIOMotorClient(connection_url)
             database = client["my_database"]
