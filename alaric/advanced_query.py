@@ -12,12 +12,17 @@ class AQ:
     item: Union[ComparisonT, LogicalT]]
         The parent item we wish to build upon.
 
+
     .. code-block:: python
 
+        # A query to fetch all items
+        # where the `id` field is equal to `1`
+        # AND the document contains a `prefix` field
         from alaric import AQ
+        from alaric.logical import AND
+        from alaric.comparison import EQ, EXISTS
 
-        query = AQ(...)
-        # query = AQ(AND(EQ(..., ...), EXISTS(...)))
+        query = AQ(AND(EQ("id", 1), EXISTS("prefix")))
     """
 
     def __init__(

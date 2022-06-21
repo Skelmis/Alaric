@@ -5,6 +5,7 @@ examples/dev.py
 docs/_build
 test/
 *.prof
+pyi_tmp
 
 # IntelliJ project files
 .idea

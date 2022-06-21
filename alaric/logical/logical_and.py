@@ -7,7 +7,21 @@ if TYPE_CHECKING:
 
 
 class AND:
-    """Conduct a logical AND between all items passed to the constructor."""
+    """Conduct a logical AND between all items passed to the constructor.
+
+
+    Lets build a query which returns all results where the field ``discord``
+    is equal to ``Skelmis#9135`` and ``gamer_tag`` is equal to ``Skelmis``
+
+    .. code-block:: python
+        :linenos:
+
+        from alaric import AQ
+        from alaric.logical import AND
+        from alaric.comparison import EQ
+
+        query = AQ(AND(EQ("discord", "Skelmis#9135"), EQ("gamer_tag", "Skelmis")))
+    """
 
     def __init__(
         self,

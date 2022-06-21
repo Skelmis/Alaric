@@ -1,14 +1,13 @@
-.. Alaric documentation master file, created by
-   sphinx-quickstart on Sat Apr 30 02:06:39 2022.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Alaric's documentation!
 ==================================
 
+Providing a beautiful way to interact with MongoDB asynchronously in Python.
+
+``pip install alaric``
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Primary Usage:
 
    modules/main.rst
 
@@ -16,18 +15,19 @@ Welcome to Alaric's documentation!
    :maxdepth: 2
    :caption: Advanced Usage:
 
+   modules/objects/advanced_query.rst
    modules/selectors/comparisons.rst
    modules/selectors/logical.rst
    modules/selectors/meta.rst
-   modules/selectors/examples.rst
 
 .. toctree::
    :maxdepth: 1
    :caption: Object Reference:
 
-   modules/objects/advanced_query.rst
+   modules/objects/abc.rst
    modules/objects/logical_t.rst
    modules/objects/comparison_t.rst
+   modules/extra.rst
 
 
 

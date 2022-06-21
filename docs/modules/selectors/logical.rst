@@ -22,3 +22,10 @@ And
 .. autoclass:: AND
     :members:
     :undoc-members:
+
+Not
+---
+
+.. autoclass:: NOT
+    :members:
+    :undoc-members:

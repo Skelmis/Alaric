@@ -14,14 +14,6 @@ Negate
     :members:
     :undoc-members:
 
-.. code-block:: python
-    :linenos:
-
-    from alaric.comparison import EXISTS
-    from alaric.meta import NEGATE
-    from alaric import AQ
-
-    query = AQ(NEGATE(EXISTS("field")))
 
 
 
