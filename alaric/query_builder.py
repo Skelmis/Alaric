@@ -15,7 +15,7 @@ async def main():
     db = client["COMPX323"]
     document: Document = Document(db, "movies")
 
-    await document.find_many(f)
+    await document.find_many()
 
 
 if __name__ == "__main__":
