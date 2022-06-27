@@ -3,7 +3,7 @@ from typing import List, Dict, Optional, Union, Any, TypeVar, Type
 from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
-from alaric.abc import Buildable, Filterable
+from alaric.abc import Buildable, Filterable, Saveable
 
 T = TypeVar("T")
 """A typevar representing the type of a given converter class"""
@@ -85,7 +85,6 @@ class Document:
             data: dict = await Document.find({"_id": "my_id"})
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
         projections = projections or {}
         projections = self.__ensure_built(projections)
 
@@ -136,14 +135,13 @@ class Document:
             data: list[dict] = await Document.find_many({"my_field": True})
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
         projections = projections or {}
         projections = self.__ensure_built(projections)
 
         if projections:
-            data = await self._document.find(filter_dict, projections).to_list(None)
+            data = await self._document.find(filter_dict, projections).to_list(None)  # type: ignore
         else:
-            data = await self._document.find(filter_dict).to_list(None)
+            data = await self._document.find(filter_dict).to_list(None)  # type: ignore
 
         if try_convert:
             return await self._attempt_convert(data)
@@ -176,7 +174,6 @@ class Document:
             await Document.delete({"prefix": "!"})
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
         result: DeleteResult = await self._document.delete_many(filter_dict)
         result: Optional[DeleteResult] = result if result.deleted_count != 0 else None
         return result
@@ -196,7 +193,7 @@ class Document:
         """
         try:
             await self._document.drop()
-        except:
+        except:  # noqa
             for entry in await self.get_all(try_convert=False):
                 await self.delete(entry)
 
@@ -246,20 +243,22 @@ class Document:
         if projections:
             data = await self._document.find(
                 filter_dict, projections, *args, **kwargs
-            ).to_list(None)
+            ).to_list(
+                None  # type: ignore
+            )
         else:
-            data = await self._document.find(filter_dict, *args, **kwargs).to_list(None)
+            data = await self._document.find(filter_dict, *args, **kwargs).to_list(None)  # type: ignore
 
         if try_convert:
             return await self._attempt_convert(data)
         return data
 
-    async def insert(self, data: Dict[str, Any]) -> None:
+    async def insert(self, data: Union[Dict[str, Any], Saveable]) -> None:
         """Insert the provided data into the document.
 
         Parameters
         ----------
-        data: Dict[str, Any]
+        data: Union[Dict[str, Any], Saveable]
             The data to insert
 
 
@@ -270,13 +269,13 @@ class Document:
             # Mongo will generate one for you automatically
             await Document.insert({"_id": 1, "data": "hello world"})
         """
-        self.__ensure_dict(data)
+        data = self.__ensure_insertable(data)
         await self._document.insert_one(data)
 
     async def update(
         self,
         filter_dict: Union[Dict[str, Any], Buildable, Filterable],
-        update_data: Dict[str, Any],
+        update_data: Union[Dict[str, Any], Saveable],
         option: str = "set",
         *args: Any,
         **kwargs: Any,
@@ -287,7 +286,7 @@ class Document:
         ----------
         filter_dict: Union[Dict[str, Any], Buildable, Filterable]
             The data to filter on
-        update_data: Dict[str, Any]
+        update_data: Union[Dict[str, Any], Saveable]
             The data to upsert
         option: str
             The optional option to pass to mongo,
@@ -304,8 +303,7 @@ class Document:
             await Document.update({"_id": 1}, {"_id": 1, "data": "new data"})
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
-        self.__ensure_dict(update_data)
+        update_data = self.__ensure_insertable(update_data)
 
         await self._document.update_one(
             filter_dict, {f"${option}": update_data}, *args, **kwargs
@@ -314,7 +312,7 @@ class Document:
     async def upsert(
         self,
         filter_dict: Union[Dict[str, Any], Buildable, Filterable],
-        update_data: Dict[str, Any],
+        update_data: Union[Dict[str, Any], Saveable],
         option: str = "set",
         *args: Any,
         **kwargs: Any,
@@ -325,7 +323,7 @@ class Document:
         ----------
         filter_dict: Union[Dict[str, Any], Buildable, Filterable]
             The data to filter on
-        update_data: Dict[str, Any]
+        update_data: Union[Dict[str, Any], Saveable]
             The data to upsert
         option: str
             Update operator.
@@ -344,8 +342,7 @@ class Document:
             await Document.update({"_id": 1}, {"_id": 1, "data": "new data"})
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
-        self.__ensure_dict(update_data)
+        update_data = self.__ensure_insertable(update_data)
         await self.update(
             filter_dict, update_data, option, upsert=True, *args, **kwargs
         )
@@ -374,7 +371,6 @@ class Document:
             # {"_id": 1, "field_one": True}
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
         await self._document.update_one(filter_dict, {"$unset": {field: True}})
 
     async def increment(
@@ -411,7 +407,6 @@ class Document:
         decrease the count of a field.
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
         await self._document.update_one(filter_dict, {"$inc": {field: amount}})
 
     async def change_field_to(
@@ -444,7 +439,6 @@ class Document:
             # {"_id": 1, "prefix": "?"}
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
         await self._document.update_one(filter_dict, {"$set": {field: new_value}})
 
     async def count(
@@ -470,7 +464,6 @@ class Document:
             count: int = await Document.count({"enabled": True})
         """
         filter_dict = self.__ensure_built(filter_dict)
-        self.__ensure_dict(filter_dict)
         return await self._document.count_documents(filter_dict)
 
     async def bulk_insert(self, data: List[Dict]) -> None:
@@ -503,8 +496,14 @@ class Document:
         assert all(isinstance(entry, dict) for entry in data)
 
     @staticmethod
-    def __ensure_dict(data: Dict[str, Any]) -> None:
-        assert isinstance(data, dict)
+    def __ensure_insertable(data: Union[Dict, Saveable]) -> Dict:
+        if isinstance(data, Saveable):
+            return data.as_dict()
+
+        if not isinstance(data, Dict):
+            raise ValueError(f"Expected dict, got {data.__class__.__name__}")
+
+        return data
 
     @staticmethod
     def __ensure_built(data: Union[Dict, Buildable, Filterable]) -> Dict:
