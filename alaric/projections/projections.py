@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Union, cast
 
-from alaric.abc import BuildAble
+from alaric.abc import Buildable
 from alaric.projections import SHOW, HIDE
 
 
@@ -18,7 +18,7 @@ class PROJECTION:
     def build(self) -> Dict:
         fields: Dict = {}
         for field in self.fields:
-            field = cast(BuildAble, field)
+            field = cast(Buildable, field)
             fields = {**fields, **field.build()}
 
         if "_id" not in fields:

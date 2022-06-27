@@ -2,7 +2,7 @@ from typing import runtime_checkable, Protocol, Dict
 
 
 @runtime_checkable
-class BuildAble(Protocol):
+class Buildable(Protocol):
     """Protocol for class based Queries."""
 
     def build(self) -> Dict:

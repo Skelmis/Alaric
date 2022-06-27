@@ -3,7 +3,7 @@ from typing import List, Dict, Optional, Union, Any, TypeVar, Type
 from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
-from alaric.abc import BuildAble
+from alaric.abc import Buildable
 
 T = TypeVar("T")
 """A typevar representing the type of a given converter class"""
@@ -51,8 +51,8 @@ class Document:
 
     async def find(
         self,
-        filter_dict: Union[Dict[str, Any], BuildAble],
-        projections: Optional[Union[Dict[str, Any], BuildAble]] = None,
+        filter_dict: Union[Dict[str, Any], Buildable],
+        projections: Optional[Union[Dict[str, Any], Buildable]] = None,
         *,
         try_convert: bool = True,
     ) -> Optional[Union[Dict[str, Any], Type[T]]]:
@@ -60,7 +60,7 @@ class Document:
 
         Parameters
         ----------
-        filter_dict: Union[Dict, BuildAble]
+        filter_dict: Union[Dict, Buildable]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
         projections: Optional[Union[Dict[str, Any], BuildAble]]
@@ -100,8 +100,8 @@ class Document:
 
     async def find_many(
         self,
-        filter_dict: Union[Dict[str, Any], BuildAble],
-        projections: Optional[Union[Dict[str, Any], BuildAble]] = None,
+        filter_dict: Union[Dict[str, Any], Buildable],
+        projections: Optional[Union[Dict[str, Any], Buildable]] = None,
         *,
         try_convert: bool = True,
     ) -> List[Union[Dict[str, Any], Type[T]]]:
@@ -114,7 +114,7 @@ class Document:
         filter_dict: Dict[str, Any]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
-        projections: Optional[Union[Dict[str, Any], BuildAble]]
+        projections: Optional[Union[Dict[str, Any], Buildable]]
             Specify the data you want
             returned from matching queries.
         try_convert: bool
@@ -151,7 +151,7 @@ class Document:
 
     async def delete(
         self,
-        filter_dict: Union[Dict, BuildAble],
+        filter_dict: Union[Dict, Buildable],
     ) -> Optional[DeleteResult]:
         """
         Delete an item from the Document
@@ -159,7 +159,7 @@ class Document:
 
         Parameters
         ----------
-        filter_dict: Union[Dict, BuildAble]
+        filter_dict: Union[Dict, Buildable]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
 
@@ -202,8 +202,8 @@ class Document:
 
     async def get_all(
         self,
-        filter_dict: Optional[Union[Dict[str, Any], BuildAble]] = None,
-        projections: Optional[Union[Dict[str, Any], BuildAble]] = None,
+        filter_dict: Optional[Union[Dict[str, Any], Buildable]] = None,
+        projections: Optional[Union[Dict[str, Any], Buildable]] = None,
         *args: Any,
         try_convert: bool = True,
         **kwargs: Any,
@@ -217,7 +217,7 @@ class Document:
         filter_dict: Optional[Dict[str, Any]]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
-        projections: Optional[Union[Dict[str, Any], BuildAble]]
+        projections: Optional[Union[Dict[str, Any], Buildable]]
             Specify the data you want
             returned from matching queries.
         try_convert: bool
@@ -275,7 +275,7 @@ class Document:
 
     async def update(
         self,
-        filter_dict: Union[Dict[str, Any], BuildAble],
+        filter_dict: Union[Dict[str, Any], Buildable],
         update_data: Dict[str, Any],
         option: str = "set",
         *args: Any,
@@ -285,7 +285,7 @@ class Document:
 
         Parameters
         ----------
-        filter_dict: Union[Dict[str, Any], BuildAble]
+        filter_dict: Union[Dict[str, Any], Buildable]
             The data to filter on
         update_data: Dict[str, Any]
             The data to upsert
@@ -313,7 +313,7 @@ class Document:
 
     async def upsert(
         self,
-        filter_dict: Union[Dict[str, Any], BuildAble],
+        filter_dict: Union[Dict[str, Any], Buildable],
         update_data: Dict[str, Any],
         option: str = "set",
         *args: Any,
@@ -323,7 +323,7 @@ class Document:
 
         Parameters
         ----------
-        filter_dict: Union[Dict[str, Any], BuildAble]
+        filter_dict: Union[Dict[str, Any], Buildable]
             The data to filter on
         update_data: Dict[str, Any]
             The data to upsert
@@ -351,13 +351,13 @@ class Document:
         )
 
     async def unset(
-        self, filter_dict: Union[Dict[str, Any], BuildAble], field: Any
+        self, filter_dict: Union[Dict[str, Any], Buildable], field: Any
     ) -> None:
         """Delete a given field on a collection
 
         Parameters
         ----------
-        filter_dict: Union[Dict[str, Any], BuildAble]
+        filter_dict: Union[Dict[str, Any], Buildable]
             The fields to match on (Think _id)
         field: Any
             The field to remove
@@ -379,7 +379,7 @@ class Document:
 
     async def increment(
         self,
-        filter_dict: Union[Dict[str, Any], BuildAble],
+        filter_dict: Union[Dict[str, Any], Buildable],
         field: str,
         amount: Union[int, float],
     ) -> None:
@@ -387,7 +387,7 @@ class Document:
 
         Parameters
         ----------
-        filter_dict: Union[Dict[str, Any], BuildAble]
+        filter_dict: Union[Dict[str, Any], Buildable]
             The 'thing' we want to increment
         field: str
             The key for the field to increment
@@ -416,7 +416,7 @@ class Document:
 
     async def change_field_to(
         self,
-        filter_dict: Union[Dict[str, Any], BuildAble],
+        filter_dict: Union[Dict[str, Any], Buildable],
         field: str,
         new_value: Any,
     ) -> None:
@@ -424,7 +424,7 @@ class Document:
 
         Parameters
         ----------
-        filter_dict: Union[Dict[Any, Any], BuildAble]
+        filter_dict: Union[Dict[Any, Any], Buildable]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
         field: str
@@ -447,12 +447,12 @@ class Document:
         self.__ensure_dict(filter_dict)
         await self._document.update_one(filter_dict, {"$set": {field: new_value}})
 
-    async def count(self, filter_dict: Union[Dict[Any, Any], BuildAble]) -> int:
+    async def count(self, filter_dict: Union[Dict[Any, Any], Buildable]) -> int:
         """Return a count of how many items match the filter.
 
         Parameters
         ----------
-        filter_dict:  Union[Dict[Any, Any], BuildAble]
+        filter_dict:  Union[Dict[Any, Any], Buildable]
             The count filer.
 
         Returns
@@ -505,8 +505,8 @@ class Document:
         assert isinstance(data, dict)
 
     @staticmethod
-    def __ensure_built(data: Union[Dict, BuildAble]) -> Dict:
-        if isinstance(data, BuildAble):
+    def __ensure_built(data: Union[Dict, Buildable]) -> Dict:
+        if isinstance(data, Buildable):
             return data.build()
 
         return data
