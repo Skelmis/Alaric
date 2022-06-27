@@ -7,6 +7,14 @@ Protocols
     :members:
     :undoc-members:
 
+.. autoclass:: Filterable
+    :members:
+    :undoc-members:
+
+.. autoclass:: Saveable
+    :members:
+    :undoc-members:
+
 .. autoclass:: ComparisonT
     :members:
     :noindex:
