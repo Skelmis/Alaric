@@ -42,7 +42,7 @@ This project is licensed under the MIT license
 
 ### Funding
 
-Want a feature added? Want me to help build your software using Alaric?
+Want a feature added quickly? Want me to help build your software using Alaric?
 
 Sponsor me [here](https://github.com/sponsors/Skelmis)
 
