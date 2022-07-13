@@ -1,6 +1,6 @@
 from typing import Union, List, Dict
 
-from alaric.abc import ComparisonT, LogicalT
+from alaric.abc import ComparisonT, LogicalT, Buildable
 
 
 class AQ:
@@ -27,10 +27,7 @@ class AQ:
 
     def __init__(
         self,
-        item: Union[
-            ComparisonT,
-            LogicalT,
-        ],
+        item: Union[ComparisonT, LogicalT, Buildable],
     ):
         self._item: Union[ComparisonT, LogicalT] = item
 
