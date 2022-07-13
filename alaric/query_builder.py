@@ -8,6 +8,7 @@ from alaric.comparison import *
 from alaric.logical import *
 from alaric.meta import *
 from alaric.projections import *
+from alaric.types import ObjectId
 
 
 async def main():
@@ -15,7 +16,8 @@ async def main():
     db = client["COMPX323"]
     document: Document = Document(db, "movies")
 
-    await document.find_many()
+    r_1 = await document.find(EQ("_id", ObjectId("6297cf0186d144fe9b619135")))
+    print(r_1)
 
 
 if __name__ == "__main__":

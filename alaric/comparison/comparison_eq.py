@@ -1,5 +1,7 @@
 from typing import Dict, Union
 
+from alaric.types import ObjectId
+
 
 class EQ:
     """
@@ -9,7 +11,7 @@ class EQ:
     ----------
     field: str
         The field to check in.
-    value: Union[int, str, float, bytes, dict]
+    value: Union[int, str, float, bytes, dict, ObjectId]
         The value the field should equal.
 
     Notes
@@ -28,14 +30,18 @@ class EQ:
         query = AQ(EQ("_id", 1))
     """
 
-    def __init__(self, field: str, value: Union[int, str, float, bytes, dict]):
+    def __init__(
+        self, field: str, value: Union[int, str, float, bytes, dict, ObjectId]
+    ):
         self.field: str = field
         assert not isinstance(value, (list, tuple, set))
-        self.value: Union[int, str, float, bytes, dict] = value
+        self.value: Union[int, str, float, bytes, dict, ObjectId] = value
 
     def __repr__(self):
         return f"EQ(field='{self.field}', value={self.value})"
 
-    def build(self) -> Dict[str, Dict[str, Union[int, str, float, bytes, dict]]]:
+    def build(
+        self,
+    ) -> Dict[str, Dict[str, Union[int, str, float, bytes, dict, ObjectId]]]:
         """Return this instance as a usable Mongo filter."""
         return {self.field: {"$eq": self.value}}
