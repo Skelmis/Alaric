@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Dict
 
-from alaric.comparison import IN, GT, LT
+from alaric.comparison import IN, GT, LT, EQ
 from alaric.comparison.comparison_exists import EXISTS
 
 if TYPE_CHECKING:
@@ -22,6 +22,7 @@ class NEGATE:
     * :py:class:`~alaric.comparison.IN`
     * :py:class:`~alaric.comparison.GT`
     * :py:class:`~alaric.comparison.LT`
+    * :py:class:`~alaric.comparison.EQ`
 
 
     Lets get all documents *without* a field called ``prefix``
@@ -59,5 +60,9 @@ class NEGATE:
         elif isinstance(self.comparison, LT):
             log.debug("Use GT rather then negating LT")
             self.comparison = GT(self.comparison.field, self.comparison.value)
+
+        elif isinstance(self.comparison, EQ):
+            self.comparison._operator = "$ne"
+            return self.comparison.build()
 
         raise RuntimeError("Invalid wrapped comparison.")

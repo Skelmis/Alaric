@@ -36,6 +36,7 @@ class EQ:
         self.field: str = field
         assert not isinstance(value, (list, tuple, set))
         self.value: Union[int, str, float, bytes, dict, ObjectId] = value
+        self._operator = "$eq"
 
     def __repr__(self):
         return f"EQ(field='{self.field}', value={self.value})"
@@ -44,4 +45,4 @@ class EQ:
         self,
     ) -> Dict[str, Dict[str, Union[int, str, float, bytes, dict, ObjectId]]]:
         """Return this instance as a usable Mongo filter."""
-        return {self.field: {"$eq": self.value}}
+        return {self.field: {self._operator: self.value}}
