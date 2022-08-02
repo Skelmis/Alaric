@@ -433,7 +433,7 @@ class Document:
 
             # Assuming a data structure of
             # {"_id": 1, "prefix": "!"}
-            await Document.change_field_to({"_id": 1}, "prefix", "?"
+            await Document.change_field_to({"_id": 1}, "prefix", "?")
 
             # This will now look like
             # {"_id": 1, "prefix": "?"}
