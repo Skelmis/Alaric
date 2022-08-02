@@ -300,7 +300,7 @@ class Document:
 
             # Update the document with an `_id` of 1
             # So that it now equals the second argument
-            await Document.update({"_id": 1}, {"_id": 1, "data": "new data"})
+            await Document.upsert({"_id": 1}, {"_id": 1, "data": "new data"})
         """
         filter_dict = self.__ensure_built(filter_dict)
         update_data = self.__ensure_insertable(update_data)
