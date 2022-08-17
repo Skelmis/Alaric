@@ -14,7 +14,9 @@ class Projection:
 
         # Assuming the data structure
         # {"_id": 1234, "prefix": "!", "has_premium": False}
-        data: dict = await Document.find({"_id": "my_id"}, projections=Projection(Show("prefix")))
+        data: dict = await Document.find(
+            {"_id": "my_id"}, projections=Projection(Show("prefix"))
+        )
         print(data)
         # Will print {"prefix": "!"}
     """
