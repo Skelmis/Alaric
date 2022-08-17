@@ -149,7 +149,7 @@ Simply pass ``try_convert=False`` to the method.
 
 
 Advanced Querying
-=================
+-----------------
 
 This is a hidden gem, but MongoDB actually supports some extremely powerful queries.
 The issue however is the relevant dictionaries get big, quick.
