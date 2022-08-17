@@ -23,16 +23,8 @@ async def main():
         AQ(
             OR(
                 EQ("activated_premium", True),
-                AND(EXISTS("prefix"), IN("prefix", ["?", "1"])),
+                AND(Exists("prefix"), IN("prefix", ["?", "1"])),
             )
-        ).build()
-    )
-    print(
-        AQ(
-            AND(
-                IN("prefix", ["!", "?"]),
-                EQ("activated_premium", True),
-            ),
         ).build()
     )
 

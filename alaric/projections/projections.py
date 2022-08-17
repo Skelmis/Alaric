@@ -3,17 +3,27 @@ from __future__ import annotations
 from typing import Dict, List, Union, cast
 
 from alaric.abc import Buildable
-from alaric.projections import SHOW, HIDE
+from alaric.projections import Show, Hide
 
 
-class PROJECTION:
-    """Specify that only the given fields should be returned."""
+class Projection:
+    """Specify that only the given fields should be returned from the query.
 
-    def __init__(self, *fields: Union[SHOW, HIDE]):
-        self.fields: List[Union[SHOW, HIDE]] = list(fields)
+    .. code-block:: python
+        :linenos:
+
+        # Assuming the data structure
+        # {"_id": 1234, "prefix": "!", "has_premium": False}
+        data: dict = await Document.find({"_id": "my_id"}, projections=Projection(Show("prefix")))
+        print(data)
+        # Will print {"prefix": "!"}
+    """
+
+    def __init__(self, *fields: Union[Show, Hide]):
+        self.fields: List[Union[Show, Hide]] = list(fields)
 
     def __repr__(self):
-        return f"PROJECTION({self.fields})"
+        return f"Projection({self.fields})"
 
     def build(self) -> Dict:
         fields: Dict = {}

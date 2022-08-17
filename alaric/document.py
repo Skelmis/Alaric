@@ -4,6 +4,7 @@ from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
 from alaric.abc import Buildable, Filterable, Saveable
+from alaric.projections import Projection
 
 T = TypeVar("T")
 """A typevar representing the type of a given converter class"""
@@ -52,7 +53,7 @@ class Document:
     async def find(
         self,
         filter_dict: Union[Dict[str, Any], Buildable, Filterable],
-        projections: Optional[Union[Dict[str, Any], Buildable]] = None,
+        projections: Optional[Union[Dict[str, Any], Projection]] = None,
         *,
         try_convert: bool = True,
     ) -> Optional[Union[Dict[str, Any], Type[T]]]:
@@ -63,7 +64,7 @@ class Document:
         filter_dict: Union[Dict, Buildable, Filterable]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
-        projections: Optional[Union[Dict[str, Any], BuildAble]]
+        projections: Optional[Union[Dict[str, Any], Projection]]
             Specify the data you want
             returned from matching queries.
         try_convert: bool
@@ -100,7 +101,7 @@ class Document:
     async def find_many(
         self,
         filter_dict: Union[Dict[str, Any], Buildable, Filterable],
-        projections: Optional[Union[Dict[str, Any], Buildable]] = None,
+        projections: Optional[Union[Dict[str, Any], Projection]] = None,
         *,
         try_convert: bool = True,
     ) -> List[Union[Dict[str, Any], Type[T]]]:
@@ -113,7 +114,7 @@ class Document:
         filter_dict: Union[Dict[str, Any], Buildable, Filterable]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
-        projections: Optional[Union[Dict[str, Any], Buildable]]
+        projections: Optional[Union[Dict[str, Any], Projection]]
             Specify the data you want
             returned from matching queries.
         try_convert: bool
@@ -202,7 +203,7 @@ class Document:
     async def get_all(
         self,
         filter_dict: Optional[Union[Dict[str, Any], Buildable, Filterable]] = None,
-        projections: Optional[Union[Dict[str, Any], Buildable]] = None,
+        projections: Optional[Union[Dict[str, Any], Projection]] = None,
         *args: Any,
         try_convert: bool = True,
         **kwargs: Any,
@@ -216,7 +217,7 @@ class Document:
         filter_dict: Optional[Union[Dict[str, Any], Buildable, Filterable]]
             A dictionary to use as a filter or
             :py:class:`AQ` object.
-        projections: Optional[Union[Dict[str, Any], Buildable]]
+        projections: Optional[Union[Dict[str, Any], Projection]]
             Specify the data you want
             returned from matching queries.
         try_convert: bool

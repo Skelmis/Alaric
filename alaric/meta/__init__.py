@@ -1,3 +1,4 @@
-from .negate import NEGATE
+from .negate import Negate
 
-__all__ = ("NEGATE",)
+NEGATE = Negate
+__all__ = ("Negate", "NEGATE")

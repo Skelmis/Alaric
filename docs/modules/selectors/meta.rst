@@ -10,7 +10,11 @@ All of these classes are importable from ``alaric.meta``
 Negate
 ------
 
-.. autoclass:: NEGATE
+.. note::
+
+    ``NEGATE`` is still exported for backwards compatibility reasons.
+
+.. autoclass:: Negate
     :members:
     :undoc-members:
 

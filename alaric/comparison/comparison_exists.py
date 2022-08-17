@@ -1,7 +1,7 @@
 from typing import Dict, Union
 
 
-class EXISTS:
+class Exists:
     """
     Returns all documents that contain this field.
 

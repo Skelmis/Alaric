@@ -20,6 +20,7 @@ Providing a beautiful way to interact with MongoDB asynchronously in Python.
    modules/selectors/comparisons.rst
    modules/selectors/logical.rst
    modules/selectors/meta.rst
+   modules/selectors/projections.rst
 
 .. toctree::
    :maxdepth: 1

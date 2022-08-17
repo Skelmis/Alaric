@@ -25,7 +25,11 @@ Contains
 Existence
 ---------
 
-.. autoclass:: EXISTS
+.. note::
+
+    ``EXISTS`` is still exported for backwards compatibility reasons.
+
+.. autoclass:: Exists
     :members:
     :undoc-members:
 

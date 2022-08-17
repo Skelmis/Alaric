@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING, Dict
 
 from alaric.comparison import IN, GT, LT, EQ
-from alaric.comparison.comparison_exists import EXISTS
+from alaric.comparison.comparison_exists import Exists
 
 if TYPE_CHECKING:
     from alaric.abc import ComparisonT
@@ -12,13 +12,13 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-class NEGATE:
+class Negate:
     """
     Negate a given option, I.e. Do the opposite.
 
     Supported operands:
 
-    * :py:class:`~alaric.comparison.EXISTS`
+    * :py:class:`~alaric.comparison.Exists`
     * :py:class:`~alaric.comparison.IN`
     * :py:class:`~alaric.comparison.GT`
     * :py:class:`~alaric.comparison.LT`
@@ -30,11 +30,11 @@ class NEGATE:
     .. code-block:: python
         :linenos:
 
-        from alaric.comparison import EXISTS
-        from alaric.meta import NEGATE
+        from alaric.comparison import Exists
+        from alaric.meta import Negate
         from alaric import AQ
 
-        query = AQ(NEGATE(EXISTS("prefix")))
+        query = AQ(Negate(Exists("prefix")))
     """
 
     def __init__(self, comparison: ComparisonT):
@@ -45,7 +45,7 @@ class NEGATE:
 
     def build(self) -> Dict:
         """Returns a mongo usable filter for the negated option."""
-        if isinstance(self.comparison, EXISTS):
+        if isinstance(self.comparison, Exists):
             self.comparison._val = False
             return self.comparison.build()
 

@@ -1,5 +1,15 @@
-from .show import SHOW
-from .hide import HIDE
-from .projections import PROJECTION
+from .show import Show
+from .hide import Hide
+from .projections import Projection
 
-__all__ = ("SHOW", "HIDE", "PROJECTION")
+SHOW = Show
+HIDE = Hide
+PROJECTION = Projection
+__all__ = (
+    "Show",
+    "Hide",
+    "Projection",
+    "SHOW",
+    "HIDE",
+    "PROJECTION",
+)
