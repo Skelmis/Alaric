@@ -190,6 +190,8 @@ class Document:
         Warnings
         --------
         There is no going back if you call this accidentally.
+
+        This also currently doesn't appear to work.
         """
         try:
             await self._document.drop()

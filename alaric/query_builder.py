@@ -1,5 +1,6 @@
 import asyncio
 import os
+import secrets
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -16,8 +17,24 @@ async def main():
     db = client["COMPX323"]
     document: Document = Document(db, "movies")
 
-    r_1 = await document.find(EQ("_id", ObjectId("6297cf0186d144fe9b619135")))
-    print(r_1)
+    # r_1 = await document.find(EQ("_id", ObjectId("6297cf0186d144fe9b619135")))
+    # print(r_1)
+    print(
+        AQ(
+            OR(
+                EQ("activated_premium", True),
+                AND(EXISTS("prefix"), IN("prefix", ["?", "1"])),
+            )
+        ).build()
+    )
+    print(
+        AQ(
+            AND(
+                IN("prefix", ["!", "?"]),
+                EQ("activated_premium", True),
+            ),
+        ).build()
+    )
 
 
 if __name__ == "__main__":

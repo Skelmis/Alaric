@@ -10,6 +10,7 @@ Providing a beautiful way to interact with MongoDB asynchronously in Python.
    :caption: Primary Usage:
 
    modules/main.rst
+   modules/why_alaric.rst
 
 .. toctree::
    :maxdepth: 2
