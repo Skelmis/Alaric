@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Dict, Union
 
 if TYPE_CHECKING:
-    from alaric.abc import ComparisonT, LogicalT
+    from alaric.abc import ComparisonT, LogicalT, Buildable
 
 
 class NOT:
@@ -27,8 +27,8 @@ class NOT:
     def __init__(
         self,
         *comparisons: Union[
-            Union[ComparisonT, LogicalT],
-            List[Union[ComparisonT, LogicalT]],
+            Union[ComparisonT, LogicalT, Buildable],
+            List[Union[ComparisonT, LogicalT, Buildable]],
         ],
     ):
         self.comparisons: List[Union[ComparisonT, LogicalT]] = list(comparisons)

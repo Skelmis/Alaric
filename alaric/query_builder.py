@@ -19,14 +19,7 @@ async def main():
 
     # r_1 = await document.find(EQ("_id", ObjectId("6297cf0186d144fe9b619135")))
     # print(r_1)
-    print(
-        AQ(
-            OR(
-                EQ("activated_premium", True),
-                AND(Exists("prefix"), IN("prefix", ["?", "1"])),
-            )
-        ).build()
-    )
+    print(AQ(IN("state", ["approved", "rejected"])).build())
 
 
 if __name__ == "__main__":

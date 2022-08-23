@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Dict, Union
 
 if TYPE_CHECKING:
-    from alaric.abc import ComparisonT, LogicalT
+    from alaric.abc import ComparisonT, LogicalT, Buildable
 
 
 class OR:
@@ -26,11 +26,13 @@ class OR:
     def __init__(
         self,
         *comparisons: Union[
-            Union[ComparisonT, LogicalT],
-            List[Union[ComparisonT, LogicalT]],
+            Union[ComparisonT, LogicalT, Buildable],
+            List[Union[ComparisonT, LogicalT, Buildable]],
         ],
     ):
-        self.comparisons: List[Union[ComparisonT, LogicalT]] = list(comparisons)
+        self.comparisons: List[Union[ComparisonT, LogicalT, Buildable]] = list(
+            comparisons
+        )
 
     def __repr__(self):
         return f"OR(comparisons={self.comparisons})"
