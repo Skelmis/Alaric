@@ -19,7 +19,7 @@ async def main():
 
     # r_1 = await document.find(EQ("_id", ObjectId("6297cf0186d144fe9b619135")))
     # print(r_1)
-    print(AQ(IN("state", ["approved", "rejected"])).build())
+    print(AQ(EXISTS("up_voted_by")).build())
 
 
 if __name__ == "__main__":
