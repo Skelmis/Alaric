@@ -11,6 +11,7 @@ Providing a beautiful way to interact with MongoDB asynchronously in Python.
 
    modules/main.rst
    modules/why_alaric.rst
+   modules/cursor.rst
 
 .. toctree::
    :maxdepth: 2
@@ -30,6 +31,7 @@ Providing a beautiful way to interact with MongoDB asynchronously in Python.
    modules/objects/logical_t.rst
    modules/objects/comparison_t.rst
    modules/extra.rst
+   modules/types/object_id.rst
 
 
 

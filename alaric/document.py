@@ -1,10 +1,15 @@
-from typing import List, Dict, Optional, Union, Any, TypeVar, Type
+from __future__ import annotations
+
+from typing import List, Dict, Optional, Union, Any, TypeVar, Type, TYPE_CHECKING
 
 from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
 from alaric.abc import Buildable, Filterable, Saveable
 from alaric.projections import Projection
+
+if TYPE_CHECKING:
+    from alaric import Cursor
 
 T = TypeVar("T")
 """A typevar representing the type of a given converter class"""
@@ -127,6 +132,11 @@ class Document:
         -------
         List[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]
             The result of the query
+
+        Notes
+        -----
+        This uses a cursor internally, consider using them for
+        more complicated queries.
 
 
         .. code-block:: python
@@ -555,3 +565,8 @@ class Document:
     def raw_collection(self) -> AsyncIOMotorCollection:
         """The connection collection instance."""
         return self._document
+
+    def create_cursor(self) -> Cursor:
+        from alaric import Cursor
+
+        return Cursor(self.raw_collection, converter=self.converter)

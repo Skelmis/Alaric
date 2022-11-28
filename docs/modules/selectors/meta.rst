@@ -19,5 +19,13 @@ Negate
     :undoc-members:
 
 
+All
+---
+
+.. autoclass:: All
+    :members:
+    :undoc-members:
+
+
 
 
