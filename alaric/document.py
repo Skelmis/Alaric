@@ -1,11 +1,15 @@
-from typing import List, Dict, Optional, Union, Any, TypeVar, Type
+from __future__ import annotations
+
+from typing import List, Dict, Optional, Union, Any, TypeVar, Type, TYPE_CHECKING
 
 from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
 from alaric.abc import Buildable, Filterable, Saveable
-from alaric.cursors import Cursor
 from alaric.projections import Projection
+
+if TYPE_CHECKING:
+    from alaric import Cursor
 
 T = TypeVar("T")
 """A typevar representing the type of a given converter class"""
@@ -563,4 +567,6 @@ class Document:
         return self._document
 
     def create_cursor(self) -> Cursor:
+        from alaric import Cursor
+
         return Cursor(self.raw_collection)

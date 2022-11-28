@@ -1,9 +1,8 @@
 import pytest
 
 import alaric
-from alaric import AQ, Document
+from alaric import AQ, Document, Cursor
 from alaric.comparison import IN, EQ
-from alaric.cursors import Cursor
 from alaric.logical import AND
 from alaric.projections import Projection, Show, Hide
 from tests.converter import Converter

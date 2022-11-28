@@ -1,8 +1,7 @@
 import pytest
 from mongomock_motor import AsyncMongoMockClient
 
-from alaric import Document
-from alaric.cursors import Cursor
+from alaric import Document, Cursor
 from tests.converter import Converter
 
 
