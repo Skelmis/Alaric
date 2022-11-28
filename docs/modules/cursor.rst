@@ -1,6 +1,8 @@
 Cursors
 -------
 
+Cursor's allow for receiving more then 1 document at a time from your database.
+
 
 .. currentmodule:: alaric
 
