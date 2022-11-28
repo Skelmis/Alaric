@@ -42,6 +42,10 @@ class Cursor:
             An optional class to try
             to convert all data-types which
             return either Dict or List into
+
+        Notes
+        -----
+        This class is iterable using ``async for``
         """
         self._collection: AsyncIOMotorCollection = collection
         self._filter: Dict[str, Any] = {}
@@ -53,6 +57,7 @@ class Cursor:
 
     @classmethod
     def from_document(cls, document: Document) -> Cursor:
+        """Create a new :py:class:`~alaric.Cursor` from a :py:class:`~alaric.Document`"""
         return cls(document.raw_collection, converter=document.converter)
 
     @staticmethod
@@ -219,13 +224,24 @@ class Cursor:
         self._sort = order
         return self
 
-    async def execute(self) -> List:
+    async def execute(self) -> List[Union[Dict[str, Any], Type[C]]]:
         """Execute this cursor and return the result."""
         self._build_cursor()
         data = await self._cursor.to_list(None)
         return await self._try_convert(data)
 
     def __aiter__(self):
+        """
+        This style of iteration is also supported.
+
+        .. code-block:: python
+            :linenos:
+
+            cursor: Cursor = ...
+            async for entry in cursor:
+                print(entry)
+
+        """
         self._build_cursor()
         return self
 
