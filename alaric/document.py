@@ -4,6 +4,7 @@ from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
 from alaric.abc import Buildable, Filterable, Saveable
+from alaric.cursors import Cursor
 from alaric.projections import Projection
 
 T = TypeVar("T")
@@ -127,6 +128,11 @@ class Document:
         -------
         List[Union[Dict[str, Any], Type[:py:class:`~alaric.document.T`]]]
             The result of the query
+
+        Notes
+        -----
+        This uses a cursor internally, consider using them for
+        more complicated queries.
 
 
         .. code-block:: python
@@ -555,3 +561,6 @@ class Document:
     def raw_collection(self) -> AsyncIOMotorCollection:
         """The connection collection instance."""
         return self._document
+
+    def create_cursor(self) -> Cursor:
+        return Cursor(self.raw_collection)

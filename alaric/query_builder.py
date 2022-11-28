@@ -14,12 +14,15 @@ from alaric.types import *
 
 async def main():
     client = AsyncIOMotorClient(os.environ["MONGO"])
-    db = client["COMPX323"]
-    document: Document = Document(db, "movies")
+    db = client["database"]
+    document: Document = Document(db, "users")
 
-    # r_1 = await document.find(EQ("_id", ObjectId("6297cf0186d144fe9b619135")))
-    # print(r_1)
-    print(AQ(EXISTS("up_voted_by")).build())
+    print(await document.get_all())
+    # await document.insert(
+    #     {
+    #         "data": "Don't post your connection url with the username and password online..."
+    #     }
+    # )
 
 
 if __name__ == "__main__":
