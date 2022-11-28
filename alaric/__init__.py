@@ -9,7 +9,7 @@ Ascending = 1
 Descending = -1
 
 __all__ = ("AQ", "Document", "Ascending", "Descending", "Cursor")
-__version__ = "1.1.4"
+__version__ = "1.2.0"
 VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 version_info = VersionInfo(major=1, minor=1, micro=4, releaselevel="final", serial=0)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
