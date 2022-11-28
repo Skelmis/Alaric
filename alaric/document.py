@@ -569,4 +569,4 @@ class Document:
     def create_cursor(self) -> Cursor:
         from alaric import Cursor
 
-        return Cursor(self.raw_collection)
+        return Cursor(self.raw_collection, converter=self.converter)

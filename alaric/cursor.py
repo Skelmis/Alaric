@@ -1,6 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Any, Dict, List, Tuple, Union, Literal
+from typing import (
+    TYPE_CHECKING,
+    Optional,
+    Any,
+    Dict,
+    List,
+    Tuple,
+    Union,
+    Literal,
+    Type,
+    TypeVar,
+)
 
 from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorCursor
 
@@ -11,19 +22,38 @@ from alaric.projections import Projection
 if TYPE_CHECKING:
     from alaric import Document
 
+C = TypeVar("C")
+"""A typevar representing the type of a given converter class"""
+
 
 class Cursor:
-    def __init__(self, collection: AsyncIOMotorCollection):
+    def __init__(
+        self,
+        collection: AsyncIOMotorCollection,
+        converter: Optional[Type[C]] = None,
+    ):
+        """
+
+        Parameters
+        ----------
+        collection: AsyncIOMotorCollection
+            The motor collection
+        converter: Optional[Type[:py:class:`~alaric.cursor.C`]]
+            An optional class to try
+            to convert all data-types which
+            return either Dict or List into
+        """
         self._collection: AsyncIOMotorCollection = collection
         self._filter: Dict[str, Any] = {}
         self._projections: Optional[Dict[str, Any]] = None
         self._limit: int = 0  # Amount of items to return
         self._sort: Optional[List[Tuple[str, Any]], Tuple[str, Any]] = None
         self._cursor: Optional[AsyncIOMotorCursor] = None
+        self._converter: Optional[Type[C]] = converter
 
     @classmethod
     def from_document(cls, document: Document) -> Cursor:
-        return cls(document.raw_collection)
+        return cls(document.raw_collection, converter=document.converter)
 
     @staticmethod
     def __ensure_built(data: Union[Dict, Buildable, Filterable]) -> Dict:
@@ -192,14 +222,30 @@ class Cursor:
     async def execute(self) -> List:
         """Execute this cursor and return the result."""
         self._build_cursor()
-        return await self._cursor.to_list(None)
+        data = await self._cursor.to_list(None)
+        return await self._try_convert(data)
 
     def __aiter__(self):
         self._build_cursor()
         return self
 
     async def __anext__(self):
-        async for item in self._cursor:
-            return item
+        async for data in self._cursor:
+            return await self._try_convert(data)
 
         raise StopAsyncIteration
+
+    async def _try_convert(
+        self, data: Union[Dict, List[Dict]]
+    ) -> Union[List[Union[Dict[str, Any], Type[C]]], Union[Dict[str, Any], Type[C]]]:
+        if not data or not self._converter:
+            return data
+
+        if not isinstance(data, list):
+            return self._converter(**data)
+
+        new_data = []
+        for d in data:
+            new_data.append(self._converter(**d))
+
+        return new_data

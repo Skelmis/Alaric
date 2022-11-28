@@ -135,3 +135,23 @@ async def test_sort(document: Document):
 
     data = r_1[0]
     assert data == {"data": 9}
+
+
+async def test_converter_from_document(converter_document: Document):
+    cursor: Cursor = Cursor.from_document(converter_document)
+    await converter_document.bulk_insert([{"value": i} for i in range(10)])
+
+    r_1 = await cursor.execute()
+    assert isinstance(r_1, list)
+    assert len(r_1) == 10
+    assert isinstance(r_1[0], Converter)
+
+
+async def test_converter_create_cursor(converter_document: Document):
+    cursor: Cursor = converter_document.create_cursor()
+    await converter_document.bulk_insert([{"value": i} for i in range(10)])
+
+    r_1 = await cursor.execute()
+    assert isinstance(r_1, list)
+    assert len(r_1) == 10
+    assert isinstance(r_1[0], Converter)
