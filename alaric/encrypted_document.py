@@ -1,7 +1,7 @@
 import datetime
 import hashlib
 import secrets
-from typing import List, Dict, Optional, Union, Any, TypeVar, Type
+from typing import List, Dict, Optional, Union, Any, TypeVar, Type, TYPE_CHECKING
 
 import orjson
 from Crypto.Cipher import AES
@@ -472,3 +472,45 @@ class EncryptedDocument(Document):
             encrypted_data.append(self._decrypt_data(d))
 
         await self._document.insert_many(encrypted_data)
+
+    if TYPE_CHECKING:
+        # I don't like this but Pycharm doesn't
+        # properly support methods from parents
+        async def find(
+            self,
+            filter_dict: Union[Dict[str, Any], Buildable, Filterable],
+            projections: Optional[Union[Dict[str, Any], Projection]] = None,
+            *,
+            try_convert: bool = True,
+        ) -> Optional[Union[Dict[str, Any], Type[T]]]:
+            ...
+
+        async def find_many(
+            self,
+            filter_dict: Union[Dict[str, Any], Buildable, Filterable],
+            projections: Optional[Union[Dict[str, Any], Projection]] = None,
+            *,
+            try_convert: bool = True,
+        ) -> List[Union[Dict[str, Any], Type[T]]]:
+            ...
+
+        async def delete(
+            self,
+            filter_dict: Union[Dict, Buildable, Filterable],
+        ) -> Optional[DeleteResult]:
+            ...
+
+        async def get_all(
+            self,
+            filter_dict: Optional[Union[Dict[str, Any], Buildable, Filterable]] = None,
+            projections: Optional[Union[Dict[str, Any], Projection]] = None,
+            *args: Any,
+            try_convert: bool = True,
+            **kwargs: Any,
+        ) -> List[Optional[Union[Dict[str, Any], Type[T]]]]:
+            ...
+
+        async def count(
+            self, filter_dict: Union[Dict[Any, Any], Buildable, Filterable]
+        ) -> int:
+            ...
