@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from typing import (
     TYPE_CHECKING,
     Optional,
@@ -16,6 +17,7 @@ from typing import (
 from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorCursor
 
 from alaric.abc import Buildable, Filterable
+from alaric.encryption import EncryptedFields
 from alaric.meta import All
 from alaric.projections import Projection
 
@@ -26,11 +28,15 @@ C = TypeVar("C")
 """A typevar representing the type of a given converter class"""
 
 
+# noinspection DuplicatedCode
 class Cursor:
     def __init__(
         self,
         collection: AsyncIOMotorCollection,
+        *,
         converter: Optional[Type[C]] = None,
+        encryption_key: Optional[bytes] = None,
+        encrypted_fields: Optional[EncryptedFields] = None,
     ):
         """
 
@@ -42,6 +48,10 @@ class Cursor:
             An optional class to try
             to convert all data-types which
             return either Dict or List into
+        encrypted_fields: Optional[EncryptedFields]
+            A list of fields to AES decrypt when encountered
+        encryption_key: Optional[bytes]
+            The key to use for AES decryption
 
         Notes
         -----
@@ -54,6 +64,15 @@ class Cursor:
         self._sort: Optional[List[Tuple[str, Any]], Tuple[str, Any]] = None
         self._cursor: Optional[AsyncIOMotorCursor] = None
         self._converter: Optional[Type[C]] = converter
+        self._encrypted_fields: EncryptedFields = (
+            encrypted_fields if encrypted_fields is not None else EncryptedFields()
+        )
+        self._encryption_key = encryption_key
+
+        if self._encrypted_fields and not self._encryption_key:
+            raise ValueError(
+                "You must set both encryption options to use encryption features."
+            )
 
     @classmethod
     def from_document(cls, document: Document) -> Cursor:
@@ -253,15 +272,75 @@ class Cursor:
 
     async def _try_convert(
         self, data: Union[Dict, List[Dict]]
-    ) -> Union[List[Union[Dict[str, Any], Type[C]]], Union[Dict[str, Any], Type[C]]]:
-        if not data or not self._converter:
+    ) -> Union[List[Union[Dict[str, Any], Type[T]]], Union[Dict[str, Any], Type[C]]]:
+        if not data:
             return data
 
+        if not self._converter:
+            if isinstance(data, list):
+                out = []
+                for itr in data:
+                    out.append(self._decrypt_data(itr))
+                return out
+
+            return self._decrypt_data(data)
+
         if not isinstance(data, list):
-            return self._converter(**data)
+            return self._converter(**self._decrypt_data(data))
 
         new_data = []
         for d in data:
-            new_data.append(self._converter(**d))
+            new_data.append(self._converter(**self._decrypt_data(d)))
 
         return new_data
+
+    # Copied from EncryptedDocument
+    def _decrypt_data(self, data: Dict) -> Dict:
+        decrypted_fields = {}
+        for k, v in data.items():
+            if k in self._encrypted_fields:
+                try:
+                    v = self._aes_decrypt_field(bytes.fromhex(v))
+                except ValueError:
+                    raise ValueError("Invalid encryption_key in use for this data.")
+
+            decrypted_fields[k] = v
+
+        return decrypted_fields
+
+    def _aes_decrypt_field(self, value: bytes):
+        def extract_list(data) -> List:
+            import orjson
+
+            inner = orjson.loads(bytes.fromhex(data))
+            return inner["list"]
+
+        def extract_dict(data):
+            import orjson
+
+            return orjson.loads(bytes.fromhex(data))
+
+        def extract_bool(data):
+            return True if data == "1" else False
+
+        # Whitelist types
+        mappings = {
+            "str": str,
+            "int": int,
+            "float": float,
+            "bool": extract_bool,
+            "dict": extract_dict,
+            "list": extract_list,
+            "datetime": datetime.datetime.fromisoformat,
+        }
+        nonce = value[:16]
+        tag = value[16:32]
+        ciphertext = value[32:]
+        from Crypto.Cipher import AES
+
+        cipher = AES.new(self._encryption_key, AES.MODE_GCM, nonce)
+        text = cipher.decrypt_and_verify(ciphertext, tag)
+        text = text.decode("utf-8")
+        _type = text[:9].split("|")[0].strip()
+        content = text[9:]
+        return mappings[_type](content)

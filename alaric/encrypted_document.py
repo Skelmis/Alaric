@@ -15,6 +15,7 @@ from alaric.projections import Projection, Show
 from alaric.document import T
 
 
+# noinspection DuplicatedCode
 class EncryptedDocument(Document):
     _version = 1
 
@@ -104,6 +105,7 @@ class EncryptedDocument(Document):
         return encrypted_fields
 
     def _decrypt_data(self, data: Dict) -> Dict:
+        # Keep the cursor mirror up to date
         decrypted_fields = {}
         for k, v in data.items():
             if k in self._encrypted_fields:
@@ -164,6 +166,7 @@ class EncryptedDocument(Document):
         return ba.hex()
 
     def _aes_decrypt_field(self, value: bytes):
+        # Keep the cursor mirror up to date
         # We assume by here it's an AES field
         def extract_list(data) -> List:
             inner = orjson.loads(bytes.fromhex(data))

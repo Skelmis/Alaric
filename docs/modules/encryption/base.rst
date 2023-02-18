@@ -24,6 +24,10 @@ Q: I want to hash my ``XXX`` field, but I also need to know the value sometimes?
 A:
 See above.
 
+Q: How do I deal with encrypted items in cursor's?
+A:
+Cursor's have first class support for encrypted fields.
+
 Q: I encrypted my data using a generated key and lost it. Help!
 A:
 Your data is gone if you lose your key.
