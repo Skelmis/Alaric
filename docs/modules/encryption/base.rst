@@ -28,6 +28,13 @@ Q: How do I deal with encrypted items in cursor's?
 A:
 Cursor's have first class support for encrypted fields.
 
+Q: Why are only the field values encrypted?
+A:
+Because this is driver support, not built in.
+
+If you want to hide keys, consider nesting your data behind
+a single key which is encrypted. It's not a great idea, but it'd work.
+
 Q: I encrypted my data using a generated key and lost it. Help!
 A:
 Your data is gone if you lose your key.
