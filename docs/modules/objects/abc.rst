@@ -3,7 +3,7 @@ Protocols
 
 .. currentmodule:: alaric.abc
 
-.. autoclass:: BuildAble
+.. autoclass:: Buildable
     :members:
     :undoc-members:
 
