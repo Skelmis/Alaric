@@ -503,7 +503,7 @@ class Document:
         if isinstance(data, Saveable):
             return data.as_dict()
 
-        if not isinstance(data, Dict):
+        if not isinstance(data, dict):
             raise ValueError(f"Expected dict, got {data.__class__.__name__}")
 
         return data
