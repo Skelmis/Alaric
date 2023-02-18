@@ -64,15 +64,16 @@ class Cursor:
         self._sort: Optional[List[Tuple[str, Any]], Tuple[str, Any]] = None
         self._cursor: Optional[AsyncIOMotorCursor] = None
         self._converter: Optional[Type[C]] = converter
+
+        if encrypted_fields and not encryption_key:
+            raise ValueError(
+                "You must set both encryption options to use encryption features."
+            )
+
         self._encrypted_fields: EncryptedFields = (
             encrypted_fields if encrypted_fields is not None else EncryptedFields()
         )
         self._encryption_key = encryption_key
-
-        if self._encrypted_fields and not self._encryption_key:
-            raise ValueError(
-                "You must set both encryption options to use encryption features."
-            )
 
     @classmethod
     def from_document(cls, document: Document) -> Cursor:
