@@ -1,10 +1,12 @@
 import datetime
 import hashlib
+import logging
 import secrets
 from typing import List, Dict, Optional, Union, Any, TypeVar, Type, TYPE_CHECKING
 
 import orjson
 from Crypto.Cipher import AES
+from bson import ObjectId
 from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
 
@@ -14,6 +16,7 @@ from alaric.encryption import EncryptedFields, HashedFields, IgnoreFields
 from alaric.projections import Projection, Show
 from alaric.document import T
 
+log = logging.getLogger(__name__)
 
 # noinspection DuplicatedCode
 class EncryptedDocument(Document):
@@ -143,7 +146,7 @@ class EncryptedDocument(Document):
                 f"unsupported type {value.__class__.__name__}"
             )
 
-    def _aes_encrypt_field(self, value) -> str:
+    def _aes_encrypt_field(self, value) -> Union[str, ObjectId]:
         # Data is stored in the format b'nonce(16 bytes)tag(16 bytes)ciphertext(remaining)'
         cipher = AES.new(self._encryption_key, AES.MODE_GCM)
         if isinstance(value, str):
@@ -161,6 +164,9 @@ class EncryptedDocument(Document):
             value = f"list    |{orjson.dumps(pre).hex()}"
         elif isinstance(value, dict):
             value = f"dict    |{orjson.dumps(value).hex()}"
+        elif isinstance(value, ObjectId):
+            log.debug("You asked me to encrypt an ObjectId instance, I can't do that.")
+            return value
         else:
             raise ValueError(
                 f"{value.__class__.__name__} is not yet supported for encryption"
