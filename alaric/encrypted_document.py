@@ -148,7 +148,7 @@ class EncryptedDocument(Document):
         cipher = AES.new(self._encryption_key, AES.MODE_GCM)
         if isinstance(value, str):
             value = f"str     |{value}"
-        if isinstance(value, bool):
+        elif isinstance(value, bool):
             value = f"bool    |{1 if value else 0}"
         elif isinstance(value, int):
             value = f"int     |{value}"
