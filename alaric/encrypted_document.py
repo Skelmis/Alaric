@@ -455,7 +455,11 @@ class EncryptedDocument(Document):
 
         await super().change_field_to(filter_dict, field, new_value)
 
-    async def bulk_insert(self, data: List[Dict]) -> None:
+    async def bulk_insert(
+        self,
+        data: List[Dict],
+        ignore_fields: Optional[IgnoreFields] = None,
+    ) -> None:
         """
         Given a List of Dictionaries, bulk insert all
         the given dictionaries in a single call.
@@ -468,6 +472,11 @@ class EncryptedDocument(Document):
         ----------
         data: List[Dict]
             The data to bulk insert
+        ignore_fields: Optional[IgnoreFields]
+            Any fields to ignore during the hashing / encryption step.
+
+            Useful if your passing this method an already hashed value
+            and you don't want to hash the hash.
 
 
         .. code-block:: python
@@ -479,10 +488,11 @@ class EncryptedDocument(Document):
                 for i in range(25)
             )
         """
-        self.__ensure_list_of_dicts(data)
+        ignore_fields = self.__ensure_ignore_fields(ignore_fields=ignore_fields)
+        self._ensure_list_of_dicts(data)
         encrypted_data = []
         for d in data:
-            encrypted_data.append(self._decrypt_data(d))
+            encrypted_data.append(self._encrypt_data(d, ignore_fields=ignore_fields))
 
         await self._document.insert_many(encrypted_data)
 
