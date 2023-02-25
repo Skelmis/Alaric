@@ -28,6 +28,7 @@ class EncryptedDocument(Document):
         hashed_fields: Optional[HashedFields] = None,
         encrypted_fields: Optional[EncryptedFields] = None,
         converter: Optional[Type[T]] = None,
+        encrypt_all_fields: bool = False,
     ):
         """
         Parameters
@@ -46,6 +47,11 @@ class EncryptedDocument(Document):
             An optional class to try
             to convert all data-types which
             return either Dict or List into
+        encrypt_all_fields: bool
+            If set to True, encrypt all fields regardless of
+            `hashed_fields` and `encrypted_fields` options.
+
+            This option respects ignored fields.
 
 
         .. code-block:: python
@@ -65,6 +71,7 @@ class EncryptedDocument(Document):
         self._encrypted_fields: EncryptedFields = (
             encrypted_fields if encrypted_fields is not None else EncryptedFields()
         )
+        self._encrypt_all_fields: bool = encrypt_all_fields
 
     def __repr__(self):
         return f"<Document(document_name={self._document_name})>"
@@ -95,7 +102,10 @@ class EncryptedDocument(Document):
                 encrypted_fields[k] = v
                 continue
 
-            if k in self._encrypted_fields:
+            if self._encrypt_all_fields:
+                v = self._aes_encrypt_field(v)
+
+            elif k in self._encrypted_fields:
                 v = self._aes_encrypt_field(v)
 
             elif k in self._hashed_fields:
@@ -108,7 +118,7 @@ class EncryptedDocument(Document):
         # Keep the cursor mirror up to date
         decrypted_fields = {}
         for k, v in data.items():
-            if k in self._encrypted_fields:
+            if k in self._encrypted_fields or self._encrypt_all_fields:
                 try:
                     v = self._aes_decrypt_field(bytes.fromhex(v))
                 except ValueError:
