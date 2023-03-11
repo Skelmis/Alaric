@@ -90,9 +90,9 @@ class Document:
             # Find the document where the `_id` field is equal to `my_id`
             data: dict = await Document.find({"_id": "my_id"})
         """
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
         projections = projections or {}
-        projections = self.__ensure_built(projections)
+        projections = self._ensure_built(projections)
 
         if projections:
             data = await self._document.find_one(filter_dict, projections)
@@ -145,9 +145,9 @@ class Document:
             # Find all documents where the key `my_field` is `true`
             data: list[dict] = await Document.find_many({"my_field": True})
         """
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
         projections = projections or {}
-        projections = self.__ensure_built(projections)
+        projections = self._ensure_built(projections)
 
         if projections:
             data = await self._document.find(filter_dict, projections).to_list(None)  # type: ignore
@@ -184,7 +184,7 @@ class Document:
             # Delete items with a `prefix` of `!`
             await Document.delete({"prefix": "!"})
         """
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
         result: DeleteResult = await self._document.delete_many(filter_dict)
         result: Optional[DeleteResult] = result if result.deleted_count != 0 else None
         return result
@@ -248,10 +248,10 @@ class Document:
             data: list[dict] = await Document.get_all()
         """
         filter_dict = filter_dict or {}
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
 
         projections = projections or {}
-        projections = self.__ensure_built(projections)
+        projections = self._ensure_built(projections)
 
         if projections:
             data = await self._document.find(
@@ -282,7 +282,7 @@ class Document:
             # Mongo will generate one for you automatically
             await Document.insert({"_id": 1, "data": "hello world"})
         """
-        data = self.__ensure_insertable(data)
+        data = self._ensure_insertable(data)
         await self._document.insert_one(data)
 
     async def update(
@@ -315,8 +315,8 @@ class Document:
             # So that it now equals the second argument
             await Document.upsert({"_id": 1}, {"_id": 1, "data": "new data"})
         """
-        filter_dict = self.__ensure_built(filter_dict)
-        update_data = self.__ensure_insertable(update_data)
+        filter_dict = self._ensure_built(filter_dict)
+        update_data = self._ensure_insertable(update_data)
 
         await self._document.update_one(
             filter_dict, {f"${option}": update_data}, *args, **kwargs
@@ -354,8 +354,8 @@ class Document:
             # insert the data instead.
             await Document.update({"_id": 1}, {"_id": 1, "data": "new data"})
         """
-        filter_dict = self.__ensure_built(filter_dict)
-        update_data = self.__ensure_insertable(update_data)
+        filter_dict = self._ensure_built(filter_dict)
+        update_data = self._ensure_insertable(update_data)
         await self.update(
             filter_dict, update_data, option, upsert=True, *args, **kwargs
         )
@@ -383,7 +383,7 @@ class Document:
             # This data will now look like the following
             # {"_id": 1, "field_one": True}
         """
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
         await self._document.update_one(filter_dict, {"$unset": {field: True}})
 
     async def increment(
@@ -419,7 +419,7 @@ class Document:
         You can also use negative numbers to
         decrease the count of a field.
         """
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
         await self._document.update_one(filter_dict, {"$inc": {field: amount}})
 
     async def change_field_to(
@@ -451,7 +451,7 @@ class Document:
             # This will now look like
             # {"_id": 1, "prefix": "?"}
         """
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
         await self._document.update_one(filter_dict, {"$set": {field: new_value}})
 
     async def count(
@@ -476,7 +476,7 @@ class Document:
             # How many items have the `enabled` field set to True
             count: int = await Document.count({"enabled": True})
         """
-        filter_dict = self.__ensure_built(filter_dict)
+        filter_dict = self._ensure_built(filter_dict)
         return await self._document.count_documents(filter_dict)
 
     async def bulk_insert(self, data: List[Dict]) -> None:
@@ -499,27 +499,27 @@ class Document:
                 for i in range(25)
             )
         """
-        self.__ensure_list_of_dicts(data)
+        self._ensure_list_of_dicts(data)
         await self._document.insert_many(data)
 
     # <-- Private methods -->
     @staticmethod
-    def __ensure_list_of_dicts(data: List[Dict]):
+    def _ensure_list_of_dicts(data: List[Dict]):
         assert isinstance(data, list)
         assert all(isinstance(entry, dict) for entry in data)
 
     @staticmethod
-    def __ensure_insertable(data: Union[Dict, Saveable]) -> Dict:
+    def _ensure_insertable(data: Union[Dict, Saveable]) -> Dict:
         if isinstance(data, Saveable):
             return data.as_dict()
 
-        if not isinstance(data, Dict):
+        if not isinstance(data, dict):
             raise ValueError(f"Expected dict, got {data.__class__.__name__}")
 
         return data
 
     @staticmethod
-    def __ensure_built(data: Union[Dict, Buildable, Filterable]) -> Dict:
+    def _ensure_built(data: Union[Dict, Buildable, Filterable]) -> Dict:
         if isinstance(data, Filterable):
             return data.as_filter()
 

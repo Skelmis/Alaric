@@ -1,10 +1,14 @@
 import asyncio
 import os
 import secrets
+from copy import copy
+from pprint import pprint
+from typing import Dict
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from alaric import *
+from alaric.encryption import *
 from alaric.comparison import *
 from alaric.logical import *
 from alaric.meta import *
@@ -14,15 +18,21 @@ from alaric.types import *
 
 async def main():
     client = AsyncIOMotorClient(os.environ["MONGO"])
-    db = client["database"]
-    document: Document = Document(db, "users")
+    db = client["test_encryption"]
+    key = EncryptedDocument.generate_aes_key()
+    print(key)
+    enc = EncryptedDocument(
+        db,
+        "movies",
+        encryption_key=key,
+        automatic_hashed_fields=AutomaticHashedFields("test"),
+        encrypt_all_fields=True,
+    )
 
-    print(await document.get_all())
-    # await document.insert(
-    #     {
-    #         "data": "Don't post your connection url with the username and password online..."
-    #     }
-    # )
+    await enc.insert({"test": True, "data": "ello"})
+
+    r_1 = await enc.find(AQ(HQF(EQ("test_hashed", True))))
+    print(r_1)
 
 
 if __name__ == "__main__":
