@@ -17,7 +17,7 @@ from typing import (
 from motor.motor_asyncio import AsyncIOMotorCollection, AsyncIOMotorCursor
 
 from alaric.abc import Buildable, Filterable
-from alaric.encryption import EncryptedFields
+from alaric.encryption import EncryptedFields, AutomaticHashedFields
 from alaric.meta import All
 from alaric.projections import Projection
 
@@ -37,6 +37,7 @@ class Cursor:
         converter: Optional[Type[C]] = None,
         encryption_key: Optional[bytes] = None,
         encrypted_fields: Optional[EncryptedFields] = None,
+        automatic_hashed_fields: Optional[AutomaticHashedFields] = None,
     ):
         """
 
@@ -52,6 +53,10 @@ class Cursor:
             A list of fields to AES decrypt when encountered
         encryption_key: Optional[bytes]
             The key to use for AES decryption
+        automatic_hashed_fields: Optional[AutomaticHashedFields]
+            A list of fields to create an additional column in
+            the db for with a hashed variant without exposing
+            the hashed data to the end user.
 
         Notes
         -----
@@ -72,6 +77,11 @@ class Cursor:
 
         self._encrypted_fields: EncryptedFields = (
             encrypted_fields if encrypted_fields is not None else EncryptedFields()
+        )
+        self._automatic_hashed_fields: AutomaticHashedFields = (
+            automatic_hashed_fields
+            if automatic_hashed_fields is not None
+            else AutomaticHashedFields()
         )
         self._encryption_key = encryption_key
 
@@ -298,6 +308,9 @@ class Cursor:
     # Copied from EncryptedDocument
     def _decrypt_data(self, data: Dict) -> Dict:
         decrypted_fields = {}
+        for ktr in [f"{k}_hashed" for k in self._automatic_hashed_fields]:
+            data.pop(ktr, None)
+
         for k, v in data.items():
             if k in self._encrypted_fields:
                 try:
