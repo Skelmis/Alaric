@@ -10,6 +10,11 @@ def hash_field(field, value):
         The name of the field your hashing
     value
         The value to hash
+
+    Raises
+    ------
+    ValueError
+        Unsupported type to hash
     """
     if isinstance(value, (int, float, bool)):
         # Support hashing ints, floats and bools
