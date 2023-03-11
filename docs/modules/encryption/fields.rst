@@ -20,3 +20,7 @@ Two classes used for denoting which fields to hash / encrypt
 .. autoclass:: HashedQueryField
     :members:
     :undoc-members:
+
+.. currentmodule:: alaric.util
+
+.. autofunction:: hash_field
