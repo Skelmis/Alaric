@@ -9,6 +9,10 @@ Two classes used for denoting which fields to hash / encrypt
     :members:
     :undoc-members:
 
+.. autoclass:: AutomaticHashedFields
+    :members:
+    :undoc-members:
+
 .. autoclass:: EncryptedFields
     :members:
     :undoc-members:

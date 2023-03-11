@@ -2,17 +2,23 @@ import datetime
 import hashlib
 import logging
 import secrets
-from typing import List, Dict, Optional, Union, Any, TypeVar, Type, TYPE_CHECKING
+from typing import List, Dict, Optional, Union, Any, Type, TYPE_CHECKING
 
+import bson
 import orjson
 from Crypto.Cipher import AES
 from bson import ObjectId
 from pymongo.results import DeleteResult
-from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorCollection
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from alaric import Document
 from alaric.abc import Buildable, Filterable, Saveable
-from alaric.encryption import EncryptedFields, HashedFields, IgnoreFields
+from alaric.encryption import (
+    EncryptedFields,
+    HashedFields,
+    IgnoreFields,
+    AutomaticHashedFields,
+)
 from alaric.projections import Projection, Show
 from alaric.document import T
 
@@ -29,6 +35,7 @@ class EncryptedDocument(Document):
         *,
         encryption_key: bytes,
         hashed_fields: Optional[HashedFields] = None,
+        automatic_hashed_fields: Optional[AutomaticHashedFields] = None,
         encrypted_fields: Optional[EncryptedFields] = None,
         converter: Optional[Type[T]] = None,
         encrypt_all_fields: bool = False,
@@ -44,6 +51,10 @@ class EncryptedDocument(Document):
             The key to use for AES encryption
         hashed_fields: Optional[HashedFields]
             A list of fields to SHA512 hash when encountered
+        automatic_hashed_fields: Optional[AutomaticHashedFields]
+            A list of fields to create an additional column in
+            the db for with a hashed variant without exposing
+            the hashed data to the end user.
         encrypted_fields: Optional[EncryptedFields]
             A list of fields to AES encrypt when encountered
         converter: Optional[Type[:py:class:`~alaric.document.T`]]
@@ -70,6 +81,11 @@ class EncryptedDocument(Document):
         self._encryption_key = encryption_key
         self._hashed_fields: HashedFields = (
             hashed_fields if hashed_fields is not None else HashedFields()
+        )
+        self._automatic_hashed_fields: AutomaticHashedFields = (
+            automatic_hashed_fields
+            if automatic_hashed_fields is not None
+            else AutomaticHashedFields()
         )
         self._encrypted_fields: EncryptedFields = (
             encrypted_fields if encrypted_fields is not None else EncryptedFields()
@@ -105,6 +121,15 @@ class EncryptedDocument(Document):
                 encrypted_fields[k] = v
                 continue
 
+            if k in self._automatic_hashed_fields:
+                new_key = f"{k}_hashed"
+                if new_key in encrypted_fields or new_key in data:
+                    raise ValueError(
+                        f"Cannot automatically hash {k} as the column {new_key} already exists in the dataset."
+                    )
+
+                encrypted_fields[new_key] = self._hash_field(new_key, v)
+
             if self._encrypt_all_fields:
                 v = self._aes_encrypt_field(v)
 
@@ -120,10 +145,15 @@ class EncryptedDocument(Document):
     def _decrypt_data(self, data: Dict) -> Dict:
         # Keep the cursor mirror up to date
         decrypted_fields = {}
+        # preprocess out automatic hashed fields
+        for ktr in [f"{k}_hashed" for k in self._automatic_hashed_fields]:
+            data.pop(ktr, None)
+
         for k, v in data.items():
             if k in self._encrypted_fields or self._encrypt_all_fields:
                 try:
-                    v = self._aes_decrypt_field(bytes.fromhex(v))
+                    if not isinstance(v, bson.ObjectId):
+                        v = self._aes_decrypt_field(bytes.fromhex(v))
                 except ValueError:
                     raise ValueError("Invalid encryption_key in use for this data.")
 
