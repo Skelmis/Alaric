@@ -283,7 +283,7 @@ class Cursor:
 
     async def _try_convert(
         self, data: Union[Dict, List[Dict]]
-    ) -> Union[List[Union[Dict[str, Any], Type[T]]], Union[Dict[str, Any], Type[C]]]:
+    ) -> Union[List[Union[Dict[str, Any], Type[C]]], Union[Dict[str, Any], Type[C]]]:
         if not data:
             return data
 
