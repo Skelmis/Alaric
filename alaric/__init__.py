@@ -9,7 +9,15 @@ from .encrypted_document import EncryptedDocument
 Ascending = 1
 Descending = -1
 
-__all__ = ("AQ", "Document", "Ascending", "Descending", "Cursor", "EncryptedDocument")
+__all__ = (
+    "AQ",
+    "Document",
+    "Ascending",
+    "Descending",
+    "Cursor",
+    "EncryptedDocument",
+    "util",
+)
 __version__ = "1.3.0"
 VersionInfo = namedtuple("VersionInfo", "major minor micro releaselevel serial")
 version_info = VersionInfo(major=1, minor=3, micro=0, releaselevel="final", serial=0)

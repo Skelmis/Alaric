@@ -35,6 +35,30 @@ Because this is driver support, not built in.
 If you want to hide keys, consider nesting your data behind
 a single key which is encrypted. It's not a great idea, but it'd work.
 
+Q: I want my `as_filter` method on my converter to be a hashed filter.
+A:
+You can use `alaric.util.hash_field` to hash your returned dictionary
+values in the same way that Alaric will hash your DB. This means
+you can filter based on hashed fields easily.
+
+For example:
+
+.. code-block:: python
+
+    from alaric import util
+
+    class Test:
+        def __init__(self, data, id, _id=None):
+            self.data = data
+            self.id = id
+            self._id = _id
+
+        def as_dict(self):
+            return {"data": self.data, "id": self.id}
+
+        def as_filter(self):
+            return {"id_hashed": util.hash_field("id", self.id)}
+
 Q: I encrypted my data using a generated key and lost it. Help!
 A:
 Your data is gone if you lose your key.

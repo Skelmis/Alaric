@@ -11,7 +11,7 @@ from bson import ObjectId
 from pymongo.results import DeleteResult
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from alaric import Document
+from alaric import Document, util
 from alaric.abc import Buildable, Filterable, Saveable
 from alaric.encryption import (
     EncryptedFields,
@@ -128,7 +128,7 @@ class EncryptedDocument(Document):
                         f"Cannot automatically hash {k} as the column {new_key} already exists in the dataset."
                     )
 
-                encrypted_fields[new_key] = self._hash_field(new_key, v)
+                encrypted_fields[new_key] = util.hash_field(new_key, v)
 
             if self._encrypt_all_fields:
                 v = self._aes_encrypt_field(v)
@@ -137,7 +137,7 @@ class EncryptedDocument(Document):
                 v = self._aes_encrypt_field(v)
 
             elif k in self._hashed_fields:
-                v = self._hash_field(k, v)
+                v = util.hash_field(k, v)
 
             encrypted_fields[k] = v
         return encrypted_fields
@@ -160,21 +160,6 @@ class EncryptedDocument(Document):
             decrypted_fields[k] = v
 
         return decrypted_fields
-
-    # noinspection PyMethodMayBeStatic
-    def _hash_field(self, field, value):
-        if isinstance(value, (int, float, bool)):
-            # Support hashing ints, floats and bools
-            # for search filters
-            value = str(value)
-
-        try:
-            return hashlib.sha512(value.encode("utf-8")).hexdigest()
-        except TypeError:
-            raise ValueError(
-                f"Cannot hash field '{field}' as it is an "
-                f"unsupported type {value.__class__.__name__}"
-            )
 
     def _aes_encrypt_field(self, value) -> Union[str, ObjectId]:
         # Data is stored in the format b'nonce(16 bytes)tag(16 bytes)ciphertext(remaining)'

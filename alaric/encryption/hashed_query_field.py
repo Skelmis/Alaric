@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 from typing import Union, Dict
 
+from alaric import util
 from alaric.abc import ComparisonT
 from alaric.types import ObjectId
 
@@ -33,22 +34,7 @@ class HashedQueryField:
         for k, v in initial.items():
             d = {}
             for nested_k, nested_v in v.items():
-                d[nested_k] = self._hash_field(nested_k, nested_v)
+                d[nested_k] = util.hash_field(nested_k, nested_v)
             out[k] = d
 
         return out
-
-    # noinspection PyMethodMayBeStatic
-    def _hash_field(self, field, value):
-        if isinstance(value, (int, float, bool)):
-            # Support hashing ints, floats and bools
-            # for search filters
-            value = str(value)
-
-        try:
-            return hashlib.sha512(value.encode("utf-8")).hexdigest()
-        except TypeError:
-            raise ValueError(
-                f"Cannot hash field '{field}' as it is an "
-                f"unsupported type {value.__class__.__name__}"
-            )
