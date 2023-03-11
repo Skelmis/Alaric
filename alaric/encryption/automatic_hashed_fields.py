@@ -5,8 +5,8 @@ class AutomaticHashedFields(Base):
     """A list of fields which should have a hashed field
     created automatically in the background but without access to the user.
 
-    I.e. Alaric when told to automatically hash the field `guild_id`
-    will look at incoming data, create an extra field called `guild_id_hashed`
+    I.e. Alaric when told to automatically hash the field ``guild_id``
+    will look at incoming data, create an extra field called ``guild_id_hashed``
     and add it to the database. Whenever you fetch data from the database,
     Alaric will remove this field so you never see it.
 
