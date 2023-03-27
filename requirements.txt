@@ -1,4 +1,4 @@
-dnspython==2.2.1
-motor==3.0.0
+dnspython==2.3.0
+motor==3.1.1
 pycryptodome==3.17
 orjson
