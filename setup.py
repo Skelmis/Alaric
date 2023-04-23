@@ -37,7 +37,7 @@ setup(
         "Homepage": "https://github.com/Skelmis/Alaric",
     },
     packages=find_packages(include=("alaric", "alaric.*")),
-    install_requires=["dnspython==2.2.1", "motor==3.0.0"],
+    install_requires=["dnspython>=2.2.1", "motor>=3.0.0"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
