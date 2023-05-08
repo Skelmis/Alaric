@@ -18,7 +18,7 @@ class AutomaticHashedFields(Base):
 
         from alaric.encryption import AutomaticHashedFields
 
-        HashedFields("guild_id", "test")
+        AutomaticHashedFields("guild_id", "test")
 
     .. note::
         You can use this in conjunction with an encrypted field to
