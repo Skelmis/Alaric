@@ -9,6 +9,8 @@ encryption at rest so this is my next best thing.
 The new document subclass supports both encrypting fields with AES
 and hashing fields with SHA512.
 
+**This does not replace password hashing. Do not use this for storing passwords. Use an algorithm such as Bcrypt or Argon2id**
+
 Database design impacts
 ***********************
 
