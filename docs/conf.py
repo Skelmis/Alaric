@@ -52,6 +52,7 @@ intersphinx_mapping = {
     "typing": ("https://docs.python.org/3", None),
     "motor": ("https://motor.readthedocs.io/en/stable", None),
     "pymongo": ("https://pymongo.readthedocs.io/en/stable/", None),
+    "redis": ("https://redis.readthedocs.io/en/stable/", None),
 }
 
 all_typevars = True

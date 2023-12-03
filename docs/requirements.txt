@@ -4,3 +4,4 @@ sphinx-toolbox
 motor
 pycryptodome==3.17
 orjson
+redis

@@ -22,6 +22,7 @@ Providing a beautiful way to interact with MongoDB asynchronously in Python.
    modules/selectors/logical.rst
    modules/selectors/meta.rst
    modules/selectors/projections.rst
+   modules/cached_document.rst
 
 .. toctree::
    :maxdepth: 2
