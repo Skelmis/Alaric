@@ -17,22 +17,24 @@ from alaric.types import *
 
 
 async def main():
-    client = AsyncIOMotorClient(os.environ["MONGO"])
-    db = client["test_encryption"]
-    key = EncryptedDocument.generate_aes_key()
-    print(key)
-    enc = EncryptedDocument(
-        db,
-        "movies",
-        encryption_key=key,
-        automatic_hashed_fields=AutomaticHashedFields("test"),
-        encrypt_all_fields=True,
-    )
+    # client = AsyncIOMotorClient(os.environ["MONGO"])
+    # db = client["test_encryption"]
+    # key = EncryptedDocument.generate_aes_key()
+    # print(key)
+    # enc = EncryptedDocument(
+    #     db,
+    #     "movies",
+    #     encryption_key=key,
+    #     automatic_hashed_fields=AutomaticHashedFields("test"),
+    #     encrypt_all_fields=True,
+    # )
+    #
+    # await enc.insert({"test": True, "data": "ello"})
+    #
+    # r_1 = await enc.find(AQ(HQF(EQ("test_hashed", True))))
+    # print(r_1)
 
-    await enc.insert({"test": True, "data": "ello"})
-
-    r_1 = await enc.find(AQ(HQF(EQ("test_hashed", True))))
-    print(r_1)
+    print(AQ(EXISTS("image_url")).build())
 
 
 if __name__ == "__main__":
