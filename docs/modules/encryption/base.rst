@@ -22,6 +22,10 @@ I suggest mirroring the fields, one hashed and one encrypted.
 You can run filters against the hashed field as hashes don't change, and
 when you need to gain access to that data you can fetch it via the encrypted field.
 
+Note that if your database is leaked this does mean the barrier to retrieving your data
+is only that the hash is cracked. The hashing used in Alaric should not be considered
+secure against brute forcing methods and thus you accept that data may be reversed from hashed fields.
+
 
 **Q:** I want to hash my ``XXX`` field, but I also need to know the value sometimes?
 
