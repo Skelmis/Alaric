@@ -37,7 +37,7 @@ class Negate:
         query = AQ(Negate(Exists("prefix")))
     """
 
-    def __init__(self, comparison: ComparisonT):
+    def __init__(self, comparison: ComparisonT | Exists):
         self.comparison: ComparisonT = comparison
 
     def __repr__(self):
