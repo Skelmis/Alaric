@@ -6,6 +6,7 @@ docs/_build
 test/
 *.prof
 pyi_tmp
+poetry.lock
 
 # IntelliJ project files
 .idea

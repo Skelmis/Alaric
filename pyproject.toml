@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "alaric"
+version = "1.4.0"
+description = "A simplistic yet powerful asynchronous MongoDB query engine."
+authors = ["skelmis <skelmis.craft@gmail.com>"]
+license = "MIT"
+readme = "readme.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+redis = {extras = ["hiredis"], version = "^5.1.1", optional = true}
+dnspython = "2.3.0"
+motor = "^3.6.0"
+pycryptodome = "^3.21.0"
+orjson = "^3.10.7"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "7.2.0"
+mongomock-motor = "0.0.13"
+pytest-asyncio = "0.20.1"
+fakeredis = "2.20.0"
+
+[project]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Issue tracker" = "https://github.com/Skelmis/Alaric/issues"
+Documentation = "https://alaric.rtfd.io/"
+Homepage = "https://github.com/Skelmis/Alaric"
+
+[tool.poetry.extras]
+cached = ["redis"]
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
