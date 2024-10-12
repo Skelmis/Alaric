@@ -22,7 +22,7 @@ class LogicalT(Protocol):
         *comparisons: Union[
             Union[ComparisonT, LogicalT],
             List[Union[ComparisonT, LogicalT]],
-        ]
+        ],
     ):
         ...
 

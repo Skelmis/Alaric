@@ -23,6 +23,7 @@ from alaric.document import T
 
 log = logging.getLogger(__name__)
 
+
 # noinspection DuplicatedCode
 class EncryptedDocument(Document):
     _version = 1

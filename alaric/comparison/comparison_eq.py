@@ -31,7 +31,16 @@ class EQ:
     """
 
     def __init__(
-        self, field: str, value: Union[int, str, float, bytes, dict, ObjectId]
+        self,
+        field: str,
+        value: Union[
+            int,
+            str,
+            float,
+            bytes,
+            dict,
+            ObjectId,
+        ],
     ):
         self.field: str = field
         assert not isinstance(value, (list, tuple, set))
