@@ -47,3 +47,11 @@ Less then
     :members:
     :undoc-members:
 
+Regex
+-----
+
+Also how to do full text searching.
+
+.. autoclass:: Regex
+    :members:
+    :undoc-members:
