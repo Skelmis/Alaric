@@ -9,6 +9,9 @@ from alaric.projections import Show, Hide
 class Projection:
     """Specify that only the given fields should be returned from the query.
 
+    If you use Hide, the ``_id`` field will automatically also be hidden.
+    If hiding ``_id`` is not desired, include ``Show("_id")`` in your Projection.
+
     .. code-block:: python
         :linenos:
 

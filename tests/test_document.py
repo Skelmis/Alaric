@@ -2,7 +2,7 @@ import pytest
 
 from alaric import Document, AQ
 from alaric.comparison import EQ
-from alaric.projections import Projection, Show
+from alaric.projections import Projection, Show, Hide
 from tests.converter import Converter
 
 
@@ -102,3 +102,15 @@ async def test_find_filterable(document: Document):
     await document.insert({"_id": "test"})
     r_2 = await document.find(obj)
     assert r_2 is not None
+
+
+async def test_projections_hide_id_by_default(document: Document):
+    await document.insert({"_id": "one", "value": "value", "hello": "world"})
+
+    r_1 = await document.find(
+        AQ(EQ("_id", "one")),
+        projections=Projection(
+            Hide("value"),
+        ),
+    )
+    assert r_1 == {"hello": "world"}
