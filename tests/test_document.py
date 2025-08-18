@@ -1,6 +1,7 @@
 import pytest
 
-from alaric import Document
+from alaric import Document, AQ
+from alaric.comparison import EQ
 from alaric.projections import Projection, Show
 from tests.converter import Converter
 

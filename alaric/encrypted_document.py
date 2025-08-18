@@ -526,8 +526,7 @@ class EncryptedDocument(Document):
             projections: Optional[Union[Dict[str, Any], Projection]] = None,
             *,
             try_convert: bool = True,
-        ) -> Optional[Union[Dict[str, Any], Type[T]]]:
-            ...
+        ) -> Optional[Union[Dict[str, Any], Type[T]]]: ...
 
         async def find_many(
             self,
@@ -535,14 +534,12 @@ class EncryptedDocument(Document):
             projections: Optional[Union[Dict[str, Any], Projection]] = None,
             *,
             try_convert: bool = True,
-        ) -> List[Union[Dict[str, Any], Type[T]]]:
-            ...
+        ) -> List[Union[Dict[str, Any], Type[T]]]: ...
 
         async def delete(
             self,
             filter_dict: Union[Dict, Buildable, Filterable],
-        ) -> Optional[DeleteResult]:
-            ...
+        ) -> Optional[DeleteResult]: ...
 
         async def get_all(
             self,
@@ -551,10 +548,8 @@ class EncryptedDocument(Document):
             *args: Any,
             try_convert: bool = True,
             **kwargs: Any,
-        ) -> List[Optional[Union[Dict[str, Any], Type[T]]]]:
-            ...
+        ) -> List[Optional[Union[Dict[str, Any], Type[T]]]]: ...
 
         async def count(
             self, filter_dict: Union[Dict[Any, Any], Buildable, Filterable]
-        ) -> int:
-            ...
+        ) -> int: ...

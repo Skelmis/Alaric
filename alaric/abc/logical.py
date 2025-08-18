@@ -23,11 +23,9 @@ class LogicalT(Protocol):
             Union[ComparisonT, LogicalT],
             List[Union[ComparisonT, LogicalT]],
         ],
-    ):
-        ...
+    ): ...
 
-    def __repr__(self):
-        ...
+    def __repr__(self): ...
 
     def build(self) -> Dict[str, List[Dict]]:
         """Return this instance as a usable Mongo filter."""
